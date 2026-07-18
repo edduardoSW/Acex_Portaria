@@ -71,9 +71,9 @@ git commit
 Como o projeto é **um só**, mudanças aqui são **globais na hora**. Regras para não derrubar o outro:
 
 ### Schema (tabelas, colunas, policies)
-- Só via arquivos em [`supabase/migrations/`](supabase/migrations/) — **versionados no Git**, aplicados de propósito.
+- Só via arquivos em [`supabase/migrations/`](../supabase/migrations/) — **versionados no Git**, aplicados de propósito.
 - **Avise o outro antes de aplicar** uma migration (ele dá `git pull` e fica com o mesmo código).
-- ⚠️ **NUNCA** rode o `supabase-migration.sql` inteiro — ele começa com `DROP TABLE ... CASCADE` (apaga tudo).
+- ⚠️ **NUNCA** rode o `schema-bootstrap.sql` inteiro — ele começa com `DROP TABLE ... CASCADE` (apaga tudo).
 
 ### Edge Functions
 - `supabase functions deploy <nome>` **sobrescreve** a function no projeto compartilhado.
@@ -81,7 +81,7 @@ Como o projeto é **um só**, mudanças aqui são **globais na hora**. Regras pa
 - Deploy de todas: ver [EDGE_FUNCTIONS_SETUP.md](EDGE_FUNCTIONS_SETUP.md).
 
 ### Dados
-- Evitem `UPDATE`/`DELETE` **sem `WHERE`** (o `supabase-migration.sql`, por exemplo, sobrescreve o WhatsApp
+- Evitem `UPDATE`/`DELETE` **sem `WHERE`** (o `schema-bootstrap.sql`, por exemplo, sobrescreve o WhatsApp
   de *todos* os moradores).
 - Para testar sem sujar os dados do outro: criem **registros de teste próprios** ou usem outro `condominium_id`.
 

@@ -4,7 +4,7 @@ Sistema de gerenciamento de encomendas para condomínios: o porteiro registra en
 notifica o morador (WhatsApp) e dá baixa na entrega; o administrador gerencia moradores,
 usuários e acompanha um dashboard.
 
-> **Chegou agora no projeto?** Comece pelo **[GUIA_COLABORADOR.md](GUIA_COLABORADOR.md)** —
+> **Chegou agora no projeto?** Comece pelo **[GUIA_COLABORADOR.md](docs/GUIA_COLABORADOR.md)** —
 > é o passo a passo de onboarding do colaborador (o que já está pronto e o que falta para você
 > conseguir logar e trabalhar).
 
@@ -36,7 +36,7 @@ npm run lint     # ESLint
 ```
 
 > Para **logar** no app você precisa de um usuário válido (Auth + `profiles`). Isso depende de
-> acesso ao Supabase e está detalhado no **[GUIA_COLABORADOR.md](GUIA_COLABORADOR.md)** → "Passo 1".
+> acesso ao Supabase e está detalhado no **[GUIA_COLABORADOR.md](docs/GUIA_COLABORADOR.md)** → "Passo 1".
 
 ## Variáveis de ambiente (`.env`)
 
@@ -51,7 +51,7 @@ Já vêm preenchidas no clone. Referência:
 
 > ⚠️ Tudo que começa com `VITE_` é **embutido no bundle** e fica visível para quem abre o site.
 > Nunca coloque segredos de servidor (ex.: a API key da Evolution) em variáveis `VITE_*` — o lugar
-> certo delas é em **secrets de Edge Function** (ver [EDGE_FUNCTIONS_SETUP.md](EDGE_FUNCTIONS_SETUP.md)).
+> certo delas é em **secrets de Edge Function** (ver [EDGE_FUNCTIONS_SETUP.md](docs/EDGE_FUNCTIONS_SETUP.md)).
 
 ## Perfis de usuário
 
@@ -74,16 +74,17 @@ Tabelas principais (todas com **Row Level Security** por condomínio):
 ### Sobre os arquivos SQL
 
 - O banco compartilhado **já está criado e com seed** — você **não** precisa rodar SQL para trabalhar.
-- Para **criar um projeto novo do zero**, use os arquivos idempotentes em
-  [`supabase/migrations/`](supabase/migrations/).
-- ⚠️ **NÃO** rode o `supabase-migration.sql` inteiro no projeto compartilhado: ele começa com
-  `DROP TABLE ... CASCADE` (apaga tudo) e sobrescreve os telefones dos moradores. Ele serve só
-  para *bootstrap* de projeto novo.
+- Para **criar um projeto novo do zero**: rode o
+  [`supabase/schema-bootstrap.sql`](supabase/schema-bootstrap.sql) (cria todo o schema + seed) e depois
+  aplique as correções de [`supabase/migrations/`](supabase/migrations/).
+- ⚠️ **NUNCA** rode o `schema-bootstrap.sql` no projeto **compartilhado**: ele começa com
+  `DROP TABLE ... CASCADE` (apaga tudo) e sobrescreve os telefones dos moradores. É só para
+  *bootstrap* de projeto novo.
 
 ## Documentação do repositório
 
 | Arquivo | Para quê |
 |---------|----------|
-| **[GUIA_COLABORADOR.md](GUIA_COLABORADOR.md)** | Onboarding do colaborador: o que já está pronto e o que falta para começar. |
-| **[COLABORACAO.md](COLABORACAO.md)** | Trabalhar em dupla sem conflito (fluxo Git + regras do Supabase compartilhado). |
-| **[EDGE_FUNCTIONS_SETUP.md](EDGE_FUNCTIONS_SETUP.md)** | Deploy das 6 Edge Functions (gestão de usuários, reset de senha, notificação). |
+| **[GUIA_COLABORADOR.md](docs/GUIA_COLABORADOR.md)** | Onboarding do colaborador: o que já está pronto e o que falta para começar. |
+| **[COLABORACAO.md](docs/COLABORACAO.md)** | Trabalhar em dupla sem conflito (fluxo Git + regras do Supabase compartilhado). |
+| **[EDGE_FUNCTIONS_SETUP.md](docs/EDGE_FUNCTIONS_SETUP.md)** | Deploy das 6 Edge Functions (gestão de usuários, reset de senha, notificação). |

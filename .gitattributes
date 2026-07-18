@@ -1,0 +1,12 @@
+# Normaliza o fim de linha: o repositório guarda sempre em LF e cada working
+# copy usa o padrão do seu SO. Evita "diffs fantasma" de CRLF entre Windows/Mac/Linux.
+* text=auto
+
+# Binários — nunca normalizar
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.woff  binary
+*.woff2 binary
