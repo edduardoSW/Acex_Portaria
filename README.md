@@ -1,90 +1,88 @@
 # Acex Portaria
 
-Sistema de gerenciamento de encomendas para condomínios.
+Sistema de gerenciamento de encomendas para condomínios: o porteiro registra encomendas,
+notifica o morador (WhatsApp) e dá baixa na entrega; o administrador gerencia moradores,
+usuários e acompanha um dashboard.
 
-## Tecnologias
+> **Chegou agora no projeto?** Comece pelo **[GUIA_COLABORADOR.md](GUIA_COLABORADOR.md)** —
+> é o passo a passo de onboarding do colaborador (o que já está pronto e o que falta para você
+> conseguir logar e trabalhar).
 
-- React + TypeScript + Vite
-- Tailwind CSS
-- Supabase
-- React Router
-- React Hook Form
-- Zod
-- Lucide React
+---
 
-## Configuração do Supabase
+## Stack
 
-### 1. Projeto já criado!
+- **React 18 + TypeScript + Vite** (front-end)
+- **Tailwind CSS** (estilo)
+- **Supabase** (Postgres + Auth + Edge Functions + RLS)
+- **React Router**, **React Hook Form**, **Zod**, **Lucide React**
 
-As credenciais já estão configuradas no arquivo `.env`!
+## Rodar localmente (5 minutos)
 
-### 2. Executar SQL
-
-Execute o arquivo `supabase-migration.sql` no SQL Editor do Supabase para criar as tabelas, políticas, índices e dados de exemplo.
-
-### 3. Criar usuários no Supabase Auth
-
-1. Acesse o painel do Supabase
-2. Vá para **Authentication** → **Users**
-3. Clique em **Add user** → **Create new user**
-4. Crie dois usuários:
-   - **Admin**: Email `admin@acex.com`, Senha `admin123` (marque "Auto Confirm User")
-   - **Porteiro**: Email `porteiro@acex.com`, Senha `porteiro123` (marque "Auto Confirm User")
-
-### 4. Inserir perfis no banco de dados
-
-Depois de criar os usuários no Supabase Auth, copie os IDs dos usuários e execute o seguinte SQL no SQL Editor, substituindo os placeholders pelos IDs reais:
-
-```sql
-INSERT INTO profiles (id, email, name, role, condominium_id)
-VALUES 
-  ('ID_DO_USUARIO_ADMIN_AQUI', 'admin@acex.com', 'Administrador', 'admin', '550e8400-e29b-41d4-a716-446655440000'),
-  ('ID_DO_USUARIO_PORTEIRO_AQUI', 'porteiro@acex.com', 'Porteiro', 'doorman', '550e8400-e29b-41d4-a716-446655440000');
-```
-
-## Configuração do Projeto
-
-1. Copie o arquivo `.env.example` para `.env` (já configurado com as credenciais do Supabase)
-2. (Opcional) Preencha as variáveis da Evolution API para envio de WhatsApp
-
-## Instalação e Execução
+O projeto Supabase **já existe e já está populado**, e o `.env` **já vem no repositório** — então
+para subir a aplicação local basta:
 
 ```bash
-# Instalar dependências
-npm install
-
-# Executar em desenvolvimento
-npm run dev
-
-# Build para produção
-npm run build
+npm install      # instala as dependências (~254 pacotes)
+npm run dev      # sobe em http://localhost:5173
 ```
 
-## Evolution API
+Outros comandos:
 
-Para usar o envio automático de WhatsApp, é necessário configurar a Evolution API:
+```bash
+npm run build    # build de produção (tsc -b && vite build)
+npm run preview  # serve o build localmente
+npm run lint     # ESLint
+```
 
-1. Instale e execute a Evolution API
-2. Crie uma instância
-3. Configure as variáveis de ambiente no arquivo `.env`:
-   - `VITE_EVOLUTION_API_URL`
-   - `VITE_EVOLUTION_API_KEY`
-   - `VITE_EVOLUTION_INSTANCE`
+> Para **logar** no app você precisa de um usuário válido (Auth + `profiles`). Isso depende de
+> acesso ao Supabase e está detalhado no **[GUIA_COLABORADOR.md](GUIA_COLABORADOR.md)** → "Passo 1".
 
-## Perfis de Usuário
+## Variáveis de ambiente (`.env`)
 
-- **Porteiro**: Acesso a Nova Encomenda, Pendentes e Histórico
-- **Admin**: Acesso a Dashboard, Moradores, Usuários e Configurações
+Já vêm preenchidas no clone. Referência:
 
-## Arquitetura do Banco de Dados
+| Variável | Para quê | Valor atual |
+|----------|----------|-------------|
+| `VITE_SUPABASE_URL` | URL do projeto Supabase | preenchida |
+| `VITE_SUPABASE_ANON_KEY` | *publishable/anon key* (pública por design) | preenchida |
+| `VITE_WHATSAPP_MODE` | `manual` (abre `wa.me`) ou `evolution` (envio automático) | `manual` |
+| `VITE_EVOLUTION_API_URL` / `_API_KEY` / `_INSTANCE` | só no modo `evolution` | vazias |
 
-- **auth.users**: Tabela padrão do Supabase Auth
-- **profiles**: Perfil dos usuários, com relacionamento com `auth.users` e `condominiums`
-- **condominiums**: Dados do condomínio
-- **residents**: Moradores do condomínio
-- **packages**: Encomendas (pendentes/entregues)
-- **activity_logs**: Registro de atividades do sistema
+> ⚠️ Tudo que começa com `VITE_` é **embutido no bundle** e fica visível para quem abre o site.
+> Nunca coloque segredos de servidor (ex.: a API key da Evolution) em variáveis `VITE_*` — o lugar
+> certo delas é em **secrets de Edge Function** (ver [EDGE_FUNCTIONS_SETUP.md](EDGE_FUNCTIONS_SETUP.md)).
 
-## Row Level Security (RLS)
+## Perfis de usuário
 
-Todas as tabelas têm políticas de segurança configuradas para garantir que cada usuário só acesse os dados do seu condomínio.
+- **Porteiro** (`doorman`) → Nova Encomenda, Pendentes, Histórico. Cai em `/porteiro`.
+- **Admin** (`admin`) → Dashboard, Moradores, Usuários, Configurações. Cai em `/admin`.
+
+## Banco de dados
+
+Tabelas principais (todas com **Row Level Security** por condomínio):
+
+| Tabela | Papel |
+|--------|-------|
+| `auth.users` | usuários do Supabase Auth (padrão) |
+| `profiles` | perfil do usuário (`role`, `status`, `condominium_id`) — vinculado 1:1 a `auth.users` |
+| `condominiums` | dados do condomínio |
+| `residents` | moradores |
+| `packages` | encomendas (pendentes/entregues) |
+| `activity_logs` | registro de atividades |
+
+### Sobre os arquivos SQL
+
+- O banco compartilhado **já está criado e com seed** — você **não** precisa rodar SQL para trabalhar.
+- Para **criar um projeto novo do zero**, use os arquivos idempotentes em
+  [`supabase/migrations/`](supabase/migrations/).
+- ⚠️ **NÃO** rode o `supabase-migration.sql` inteiro no projeto compartilhado: ele começa com
+  `DROP TABLE ... CASCADE` (apaga tudo) e sobrescreve os telefones dos moradores. Ele serve só
+  para *bootstrap* de projeto novo.
+
+## Documentação do repositório
+
+| Arquivo | Para quê |
+|---------|----------|
+| **[GUIA_COLABORADOR.md](GUIA_COLABORADOR.md)** | Onboarding do colaborador: o que já está pronto e o que falta para começar. |
+| **[EDGE_FUNCTIONS_SETUP.md](EDGE_FUNCTIONS_SETUP.md)** | Deploy das 6 Edge Functions (gestão de usuários, reset de senha, notificação). |
