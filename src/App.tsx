@@ -1,16 +1,28 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { Login } from './pages/Login';
-import { DoormanHome } from './pages/DoormanHome';
-import { NewPackage } from './pages/NewPackage';
-import { PendingPackages } from './pages/PendingPackages';
-import { History } from './pages/History';
-import { AdminDashboard } from './pages/AdminDashboard';
-import { AdminPackages } from './pages/AdminPackages';
-import { AdminResidents } from './pages/AdminResidents';
-import { AdminUsers } from './pages/AdminUsers';
-import { AdminPasswordResetRequests } from './pages/AdminPasswordResetRequests';
-import { AdminSettings } from './pages/AdminSettings';
+
+// Cada página é carregada sob demanda (code-splitting por rota): o bundle
+// inicial fica pequeno e cada perfil baixa só as telas que realmente usa.
+const Login = lazy(() => import('./pages/Login').then((m) => ({ default: m.Login })));
+const DoormanHome = lazy(() => import('./pages/DoormanHome').then((m) => ({ default: m.DoormanHome })));
+const NewPackage = lazy(() => import('./pages/NewPackage').then((m) => ({ default: m.NewPackage })));
+const PendingPackages = lazy(() => import('./pages/PendingPackages').then((m) => ({ default: m.PendingPackages })));
+const History = lazy(() => import('./pages/History').then((m) => ({ default: m.History })));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard').then((m) => ({ default: m.AdminDashboard })));
+const AdminPackages = lazy(() => import('./pages/AdminPackages').then((m) => ({ default: m.AdminPackages })));
+const AdminResidents = lazy(() => import('./pages/AdminResidents').then((m) => ({ default: m.AdminResidents })));
+const AdminUsers = lazy(() => import('./pages/AdminUsers').then((m) => ({ default: m.AdminUsers })));
+const AdminPasswordResetRequests = lazy(() => import('./pages/AdminPasswordResetRequests').then((m) => ({ default: m.AdminPasswordResetRequests })));
+const AdminSettings = lazy(() => import('./pages/AdminSettings').then((m) => ({ default: m.AdminSettings })));
+
+function PageLoader() {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
 
 function SetupScreen() {
   return (
@@ -24,7 +36,7 @@ function SetupScreen() {
           <li>Crie um projeto no <a href="https://supabase.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Supabase</a></li>
           <li>Copie o URL e a Chave Anônima do seu projeto</li>
           <li>Cole no arquivo <code className="bg-gray-100 px-2 py-1 rounded text-sm">.env</code></li>
-          <li>Execute o SQL do arquivo <code className="bg-gray-100 px-2 py-1 rounded text-sm">supabase-migration.sql</code> no SQL Editor do Supabase</li>
+          <li>Execute o SQL do arquivo <code className="bg-gray-100 px-2 py-1 rounded text-sm">supabase/schema-bootstrap.sql</code> no SQL Editor do Supabase</li>
         </ol>
         <div className="bg-gray-100 p-4 rounded-xl text-sm font-mono text-gray-800">
           <p>VITE_SUPABASE_URL=seu-url</p>
@@ -39,11 +51,7 @@ function ProtectedRoute({ children, requiredRole }: { children: React.ReactNode;
   const { profile, loading } = useAuth();
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <PageLoader />;
   }
 
   if (!profile) {
@@ -68,11 +76,7 @@ function AppRoutes() {
   console.log('[App] AppRoutes rendering, profile:', profile, 'loading:', loading);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <PageLoader />;
   }
 
   if (profile?.role === 'admin') {
@@ -197,7 +201,9 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <AppRoutes />
+        <Suspense fallback={<PageLoader />}>
+          <AppRoutes />
+        </Suspense>
       </Router>
     </AuthProvider>
   );
