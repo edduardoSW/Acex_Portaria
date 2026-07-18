@@ -85,4 +85,5 @@ Tabelas principais (todas com **Row Level Security** por condomínio):
 | Arquivo | Para quê |
 |---------|----------|
 | **[GUIA_COLABORADOR.md](GUIA_COLABORADOR.md)** | Onboarding do colaborador: o que já está pronto e o que falta para começar. |
+| **[COLABORACAO.md](COLABORACAO.md)** | Trabalhar em dupla sem conflito (fluxo Git + regras do Supabase compartilhado). |
 | **[EDGE_FUNCTIONS_SETUP.md](EDGE_FUNCTIONS_SETUP.md)** | Deploy das 6 Edge Functions (gestão de usuários, reset de senha, notificação). |
