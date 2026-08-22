@@ -25,6 +25,7 @@ export function AdminResidents() {
     block: '',
     apartment: '',
     whatsapp: '',
+    email: '',
     phone: '',
   });
   const [submitting, setSubmitting] = useState(false);
@@ -93,6 +94,7 @@ export function AdminResidents() {
         block: resident.block,
         apartment: resident.apartment,
         whatsapp: resident.whatsapp,
+        email: resident.email || '',
         phone: resident.phone || '',
       });
     } else {
@@ -102,6 +104,7 @@ export function AdminResidents() {
         block: '',
         apartment: '',
         whatsapp: '',
+        email: '',
         phone: '',
       });
     }
@@ -123,6 +126,9 @@ export function AdminResidents() {
       if (!formData.whatsapp.trim()) throw new Error('WhatsApp é obrigatório');
 
       const normalizedWhatsapp = normalizeWhatsappNumber(formData.whatsapp);
+      if (!/^\S+@\S+\.\S+$/.test(formData.email.trim())) {
+        throw new Error('E-mail válido é obrigatório');
+      }
       const normalizedPhone = formData.phone ? normalizeWhatsappNumber(formData.phone) : null;
 
       // Check for duplicate unit (only when creating new or changing unit)
@@ -153,6 +159,7 @@ export function AdminResidents() {
         block: formData.block.trim(),
         apartment: formData.apartment.trim(),
         whatsapp: normalizedWhatsapp,
+        email: formData.email.trim().toLowerCase(),
         phone: normalizedPhone,
         condominium_id: profile.condominium_id,
       };
@@ -300,6 +307,7 @@ export function AdminResidents() {
                     <p className="text-gray-500 text-sm">
                       WhatsApp: {resident.whatsapp}
                     </p>
+                    <p className="text-gray-500 text-sm">E-mail cadastrado</p>
                   </div>
                   <div className="flex gap-2">
                     <button
@@ -375,6 +383,17 @@ export function AdminResidents() {
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                     />
                   </div>
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2">E-mail</label>
+                  <input
+                    type="email"
+                    required
+                    autoComplete="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  />
                 </div>
                 <div>
                   <label className="block text-gray-700 font-medium mb-2">WhatsApp</label>

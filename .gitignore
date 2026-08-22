@@ -1,10 +1,13 @@
 node_modules/
 dist/
+
 .env
 .env.local
+supabase/.env
+supabase/functions/.env
+
 .vercel/
 
-# Artefatos gerados pelo build (tsc -b compila o vite.config.ts)
 *.tsbuildinfo
 /vite.config.js
 /vite.config.d.ts

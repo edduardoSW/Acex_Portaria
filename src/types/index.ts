@@ -54,6 +54,7 @@ export interface Database {
           block: string;
           apartment: string;
           whatsapp: string;
+          email: string | null;
           phone: string | null;
           condominium_id: string;
           created_at: string;
@@ -64,6 +65,7 @@ export interface Database {
           block: string;
           apartment: string;
           whatsapp: string;
+          email?: string | null;
           phone?: string | null;
           condominium_id: string;
           created_at?: string;
@@ -74,6 +76,7 @@ export interface Database {
           block?: string;
           apartment?: string;
           whatsapp?: string;
+          email?: string | null;
           phone?: string | null;
           condominium_id?: string;
           created_at?: string;
@@ -95,6 +98,8 @@ export interface Database {
           whatsapp_sent_at: string | null;
           whatsapp_message_id: string | null;
           notification_status: 'pending' | 'opened' | 'sent' | 'failed';
+          email_delivery_status: 'pending' | 'sent' | 'failed';
+          email_last_sent_at: string | null;
         };
         Insert: {
           id?: string;
@@ -111,6 +116,8 @@ export interface Database {
           whatsapp_sent_at?: string | null;
           whatsapp_message_id?: string | null;
           notification_status?: 'pending' | 'opened' | 'sent' | 'failed';
+          email_delivery_status?: 'pending' | 'sent' | 'failed';
+          email_last_sent_at?: string | null;
         };
         Update: {
           id?: string;
@@ -127,6 +134,8 @@ export interface Database {
           whatsapp_sent_at?: string | null;
           whatsapp_message_id?: string | null;
           notification_status?: 'pending' | 'opened' | 'sent' | 'failed';
+          email_delivery_status?: 'pending' | 'sent' | 'failed';
+          email_last_sent_at?: string | null;
         };
       };
       activity_logs: {

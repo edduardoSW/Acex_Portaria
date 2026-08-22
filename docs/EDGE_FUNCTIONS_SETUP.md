@@ -56,7 +56,24 @@ supabase functions deploy delete-user --no-verify-jwt
 supabase functions deploy request-password-reset --no-verify-jwt
 supabase functions deploy resolve-password-request --no-verify-jwt
 supabase functions deploy send-package-notification --no-verify-jwt
+supabase functions deploy package-pickup --no-verify-jwt
 ```
+
+## Confirmação de retirada por e-mail
+
+Antes do deploy, aplique a migração `0003_package_pickup_email_codes.sql`. Depois configure os
+secrets usados somente no servidor:
+
+```bash
+supabase secrets set RESEND_API_KEY=re_sua_chave
+supabase secrets set EMAIL_FROM="Acex Portaria <portaria@seu-dominio.com>"
+supabase secrets set SYSTEM_URL=https://seu-sistema.example
+supabase functions deploy package-pickup --no-verify-jwt
+```
+
+A chave `RESEND_API_KEY` nunca deve usar o prefixo `VITE_`. O remetente precisa pertencer a um
+domínio validado no Resend. A function autentica o JWT novamente no código antes de usar a chave
+de serviço.
 
 - `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` são **injetados automaticamente** pelo Supabase nas
   functions — **não** configure à mão.
