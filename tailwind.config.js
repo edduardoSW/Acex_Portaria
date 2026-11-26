@@ -7,11 +7,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        'acex-navy': '#092b3d',
-        'acex-teal': '#0f766e',
-        'acex-mint': '#dff5ef',
-        'acex-lime': '#b8d83d',
-        'acex-ink': '#13252f',
+        'acex-navy': '#0a3142',
+        'acex-teal': '#008b82',
+        'acex-mint': '#ddf5f0',
+        'acex-lime': '#c4e62f',
+        'acex-ink': '#102b38',
       },
       boxShadow: {
         'acex': '0 18px 45px -28px rgba(9, 43, 61, 0.45)',

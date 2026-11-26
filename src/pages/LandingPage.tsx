@@ -11,11 +11,9 @@ import {
   Menu,
   PackageCheck,
   ShieldCheck,
-  Sparkles,
   X,
 } from 'lucide-react';
 import { AcexCredit, AcexLogo } from '../components/AcexLogo';
-import { supabase } from '../lib/supabase';
 
 type PlanKey = 'essential' | 'professional' | 'enterprise' | 'custom';
 
@@ -57,6 +55,12 @@ const plans: Plan[] = [
   },
 ];
 
+const implementationSteps = [
+  { title: 'Mapeamos', text: 'Entendemos unidades, equipe e fluxo atual da portaria.' },
+  { title: 'Configuramos', text: 'Organizamos perfis, moradores e regras do condomínio.' },
+  { title: 'Acompanhamos', text: 'A equipe começa a operar com suporte na implantação.' },
+];
+
 function calculatePlan(units: number): Plan {
   if (units <= 150) return plans[0];
   if (units <= 350) return plans[1];
@@ -84,12 +88,18 @@ export function LandingPage() {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
+  const [activeStep, setActiveStep] = useState(0);
   const selectedPlan = useMemo(() => calculatePlan(units), [units]);
 
   useEffect(() => {
     const handleUnits = (event: Event) => setUnits((event as CustomEvent<number>).detail);
     window.addEventListener('acex:set-units', handleUnits);
     return () => window.removeEventListener('acex:set-units', handleUnits);
+  }, []);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => setActiveStep((current) => (current + 1) % implementationSteps.length), 2400);
+    return () => window.clearInterval(interval);
   }, []);
 
   async function handleLead(event: FormEvent<HTMLFormElement>) {
@@ -100,27 +110,30 @@ export function LandingPage() {
     setError('');
 
     const form = new FormData(formElement);
-    const { data, error: invokeError } = await supabase.functions.invoke('send-sales-lead', {
-      body: {
+    try {
+      const response = await fetch('/api/send_sales_lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
         name: String(form.get('name') ?? '').trim(),
         condominium: String(form.get('condominium') ?? '').trim(),
         email: String(form.get('email') ?? '').trim().toLowerCase(),
         phone: String(form.get('phone') ?? '').trim(),
         units,
         message: String(form.get('message') ?? '').trim(),
-        website: String(form.get('website') ?? ''),
-      },
-    });
+          website: String(form.get('website') ?? ''),
+        }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || data?.error) throw new Error(data?.error || 'Não foi possível enviar agora.');
 
-    if (invokeError || data?.error) {
-      setError(data?.error || invokeError?.message || 'Não foi possível enviar agora. Tente novamente.');
+      setSent(true);
+      formElement.reset();
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : 'Não foi possível enviar agora. Tente novamente.');
+    } finally {
       setSending(false);
-      return;
     }
-
-    setSent(true);
-    setSending(false);
-    formElement.reset();
   }
 
   return (
@@ -159,10 +172,7 @@ export function LandingPage() {
           <div className="absolute right-0 top-20 h-[560px] w-[35%] bg-acex-mint/55" />
           <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 sm:px-8 lg:grid-cols-[1.05fr_.95fr]">
             <div>
-              <span className="inline-flex items-center gap-2 rounded-full bg-acex-mint px-4 py-2 text-sm font-black text-acex-teal">
-                <Sparkles className="h-4 w-4" /> Portaria simples. Gestão completa.
-              </span>
-              <h1 className="mt-7 max-w-3xl text-4xl font-black leading-[1.04] tracking-[-0.045em] text-acex-navy sm:text-5xl lg:text-6xl">
+              <h1 className="max-w-3xl text-4xl font-black leading-[1.04] tracking-[-0.045em] text-acex-navy sm:text-5xl lg:text-6xl">
                 Encomendas sob controle. <span className="text-acex-teal">Portaria sem ruído.</span>
               </h1>
               <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
@@ -172,18 +182,13 @@ export function LandingPage() {
                 <button onClick={() => scrollToLead()} className="h-14 rounded-xl bg-acex-teal px-7 text-base font-black text-white shadow-xl shadow-acex-teal/20 hover:bg-[#0b655e]">Calcular investimento</button>
                 <a href="#como-funciona" className="grid h-14 place-items-center rounded-xl border border-slate-200 px-7 text-base font-black text-acex-navy hover:border-acex-teal hover:text-acex-teal">Conhecer a solução</a>
               </div>
-              <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm font-bold text-slate-500">
-                {['14 dias para testar', 'Sem instalação complicada', 'Suporte na implantação'].map((item) => (
-                  <span key={item} className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-acex-teal" />{item}</span>
-                ))}
-              </div>
             </div>
 
             <div className="relative">
               <div className="absolute -inset-5 rotate-2 rounded-[2rem] bg-acex-navy" />
               <div className="relative overflow-hidden rounded-[1.7rem] border border-white/20 bg-[#f7faf9] p-4 shadow-2xl sm:p-6">
                 <div className="flex items-center justify-between rounded-2xl bg-white p-4 shadow-sm">
-                  <div className="flex items-center gap-3"><div className="grid h-10 w-10 place-items-center rounded-xl bg-acex-navy font-black text-white">AX</div><div><p className="font-black text-acex-navy">Painel da portaria</p><p className="text-xs text-slate-400">Operação em tempo real</p></div></div>
+                  <div><p className="font-black tracking-wide text-acex-navy">ACEX PORTARIA</p><p className="text-xs text-slate-400">by ACEX Partners · operação em tempo real</p></div>
                   <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">Online</span>
                 </div>
                 <div className="mt-4 grid grid-cols-3 gap-3">
@@ -235,17 +240,15 @@ export function LandingPage() {
               <h2 className="mt-4 text-3xl font-black tracking-tight sm:text-4xl">Uma implantação pensada para a rotina real.</h2>
               <p className="mt-5 text-lg leading-8 text-white/60">A estrutura acompanha o tamanho do condomínio e pode crescer junto com a operação.</p>
             </div>
-            <div className="grid gap-4 sm:grid-cols-3">
-              {[
-                ['Mapeamos', 'Entendemos unidades, equipe e fluxo atual da portaria.'],
-                ['Configuramos', 'Organizamos perfis, moradores e regras do condomínio.'],
-                ['Acompanhamos', 'A equipe começa a operar com suporte na implantação.'],
-              ].map(([title, text], index) => (
-                <article key={title} className="rounded-3xl border border-white/10 bg-white/[0.06] p-6">
-                  <span className="grid h-9 w-9 place-items-center rounded-full bg-acex-lime text-sm font-black text-acex-navy">{index + 1}</span>
-                  <h3 className="mt-6 text-lg font-black">{title}</h3>
-                  <p className="mt-3 leading-7 text-white/55">{text}</p>
-                </article>
+            <div className="relative grid gap-4 sm:grid-cols-3">
+              <div className="absolute left-[16.66%] right-[16.66%] top-[22px] hidden h-0.5 overflow-hidden bg-white/10 sm:block"><div className="h-full bg-acex-lime transition-all duration-700" style={{ width: `${(activeStep / 2) * 100}%` }} /></div>
+              {implementationSteps.map(({ title, text }, index) => (
+                <button type="button" onClick={() => setActiveStep(index)} key={title} className={`relative rounded-3xl border p-6 text-left transition-all duration-700 ${activeStep === index ? 'z-10 -translate-y-2 border-acex-lime/60 bg-white/[0.13] shadow-2xl shadow-black/15' : 'border-white/10 bg-white/[0.05] opacity-60 hover:opacity-90'}`}>
+                  <span className={`grid h-11 w-11 place-items-center rounded-full text-sm font-black transition-all duration-500 ${activeStep === index ? 'acex-step-pulse scale-110 bg-acex-lime text-acex-navy' : 'bg-white/10 text-white/60'}`}>{index + 1}</span>
+                  <h3 className={`mt-6 text-lg font-black transition-colors ${activeStep === index ? 'text-white' : 'text-white/70'}`}>{title}</h3>
+                  <p className={`mt-3 leading-7 transition-colors ${activeStep === index ? 'text-white/70' : 'text-white/40'}`}>{text}</p>
+                  <div className="mt-5 h-1 overflow-hidden rounded-full bg-white/10"><div className={`h-full bg-acex-lime transition-all duration-[2200ms] ease-linear ${activeStep === index ? 'w-full' : 'w-0'}`} /></div>
+                </button>
               ))}
             </div>
           </div>

@@ -1,7 +1,7 @@
 # Deploy das Edge Functions (Supabase)
 
-O app usa Edge Functions para gestão de usuários, redefinição de senha, notificações,
-confirmação de retirada e contatos comerciais da landing page.
+O app usa Edge Functions para gestão de usuários, redefinição de senha, notificações e
+confirmação de retirada.
 
 > **Pré-requisito:** você precisa de acesso ao projeto Supabase `jgoilgxilwempiirbsph` — ou como
 > **dono**, ou tendo sido **convidado como membro do projeto**. Sem esse acesso, o `supabase link`
@@ -20,7 +20,6 @@ confirmação de retirada e contatos comerciais da landing page.
 | `resolve-password-request` | Admin resolve o pedido de reset | ✅ | ✅ |
 | `send-package-notification` | Notificação de encomenda via **Evolution API** (modo `evolution`) | ✅ | ⚠️ **não** |
 | `package-pickup` | Confirmação de retirada por código e e-mail | ✅ | ✅ |
-| `send-sales-lead` | Envia os contatos comerciais da landing page | pública | ✅ |
 
 ¹ `request-password-reset` é **pública por design** (o usuário deslogado precisa chamá-la), então
 não valida JWT — e deve continuar assim.
@@ -59,23 +58,7 @@ supabase functions deploy request-password-reset --no-verify-jwt
 supabase functions deploy resolve-password-request --no-verify-jwt
 supabase functions deploy send-package-notification --no-verify-jwt
 supabase functions deploy package-pickup --no-verify-jwt
-supabase functions deploy send-sales-lead --no-verify-jwt
 ```
-
-## Formulário comercial da landing page
-
-A function pública `send-sales-lead` calcula novamente o plano no servidor e envia o contato
-comercial pelo Resend. Configure os secrets abaixo antes do deploy:
-
-```bash
-supabase secrets set RESEND_API_KEY=re_sua_chave
-supabase secrets set EMAIL_FROM="ACEX Portaria <contato@seu-dominio.com>"
-supabase secrets set SALES_EMAIL="comercial@seu-dominio.com"
-supabase functions deploy send-sales-lead --no-verify-jwt
-```
-
-`SALES_EMAIL` é o endereço interno que recebe os novos contatos. O formulário nunca escolhe o
-destinatário e nenhuma chave privada é exposta no front-end.
 
 ## Confirmação de retirada por e-mail
 
