@@ -4,8 +4,8 @@
 
 @layer base {
   :root {
-    color: #241e1a;
-    background: #f4efe8;
+    color: #e5e5e5;
+    background: #000000;
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -15,6 +15,7 @@
     min-width: 320px;
     min-height: 100vh;
     margin: 0;
+    background: #000000;
   }
 
   button,
@@ -31,7 +32,7 @@
 
 @layer components {
   .acex-surface {
-    @apply rounded-2xl border border-slate-200/80 bg-white shadow-acex;
+    @apply rounded-xl border border-white/10 bg-[#050505] text-white shadow-none;
     animation: acex-card-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
@@ -51,8 +52,8 @@
 
   .acex-interactive-card:hover {
     transform: translateY(-4px);
-    border-color: rgba(232, 117, 50, 0.48);
-    box-shadow: 0 22px 48px -28px rgba(28, 24, 21, 0.58);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 22px 48px -32px rgba(0, 0, 0, 0.9);
   }
 
   .acex-icon-tile {
@@ -75,8 +76,197 @@
   }
 
   .acex-input {
-    @apply h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-acex-ink outline-none transition placeholder:text-slate-400 focus:border-acex-teal focus:ring-4 focus:ring-acex-teal/10;
+    @apply h-11 w-full rounded-md border border-white/10 bg-white/[0.03] px-4 text-sm text-white outline-none transition placeholder:text-neutral-600 focus:border-white/30 focus:ring-4 focus:ring-white/5;
   }
+}
+
+/*
+ * Tema ACEX inspirado no sistema visual fornecido: superfícies pretas,
+ * bordas de baixo contraste, tipografia neutra e ações de alto contraste.
+ * O escopo mantém componentes funcionais e estados sem duplicar cada tela.
+ */
+.acex-dark {
+  min-height: 100vh;
+  background: #000;
+  color: #e5e5e5;
+  color-scheme: dark;
+}
+
+.acex-dark .bg-gray-50,
+.acex-dark .bg-gray-100,
+.acex-dark .bg-acex-navy,
+.acex-dark .bg-acex-cream {
+  background-color: #000;
+}
+
+.acex-dark .bg-white,
+.acex-dark .bg-slate-50,
+.acex-dark .bg-slate-100,
+.acex-dark .bg-gray-200,
+.acex-dark .bg-slate-50\/70,
+.acex-dark .bg-slate-50\/80,
+.acex-dark .bg-slate-200\/70,
+.acex-dark .bg-white\/95 {
+  background-color: #050505;
+}
+
+.acex-dark .bg-acex-mint {
+  background-color: rgba(232, 117, 50, 0.12);
+}
+
+.acex-dark .text-gray-900,
+.acex-dark .text-gray-800,
+.acex-dark .text-acex-ink,
+.acex-dark .text-acex-navy {
+  color: #fff;
+}
+
+.acex-dark .bg-acex-teal.text-acex-navy,
+.acex-dark .bg-acex-lime.text-acex-navy {
+  color: #171717;
+}
+
+.acex-dark .text-gray-700,
+.acex-dark .text-gray-600,
+.acex-dark .text-slate-700,
+.acex-dark .text-slate-600 {
+  color: #d4d4d4;
+}
+
+.acex-dark .text-gray-500,
+.acex-dark .text-slate-500 {
+  color: #a3a3a3;
+}
+
+.acex-dark .text-gray-300 {
+  color: #d4d4d4;
+}
+
+.acex-dark .text-gray-400,
+.acex-dark .text-slate-400 {
+  color: #737373;
+}
+
+.acex-dark .border-gray-100,
+.acex-dark .border-gray-200,
+.acex-dark .border-gray-300,
+.acex-dark .border-slate-100,
+.acex-dark .border-slate-200,
+.acex-dark .border-slate-200\/70,
+.acex-dark .border-slate-200\/80 {
+  border-color: rgba(255, 255, 255, 0.09);
+}
+
+.acex-dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+.acex-dark .divide-gray-100 > :not([hidden]) ~ :not([hidden]),
+.acex-dark .divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.acex-dark .shadow-sm,
+.acex-dark .shadow-md,
+.acex-dark .shadow-lg,
+.acex-dark .shadow-xl,
+.acex-dark .shadow-2xl,
+.acex-dark .shadow-acex {
+  --tw-shadow: 0 24px 60px -36px rgba(0, 0, 0, 0.95);
+  --tw-shadow-colored: 0 24px 60px -36px var(--tw-shadow-color);
+}
+
+.acex-dark .rounded-2xl,
+.acex-dark .rounded-3xl {
+  border-radius: 0.75rem;
+}
+
+.acex-dark .font-black {
+  font-weight: 700;
+}
+
+.acex-dark input:not([type='range']):not([type='checkbox']):not([type='radio']),
+.acex-dark select,
+.acex-dark textarea {
+  border-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.035);
+  color: #fff;
+}
+
+.acex-dark input::placeholder,
+.acex-dark textarea::placeholder {
+  color: #737373;
+}
+
+.acex-dark option {
+  background: #050505;
+  color: #fff;
+}
+
+.acex-dark table {
+  color: #d4d4d4;
+}
+
+.acex-dark .bg-blue-600,
+.acex-dark .bg-blue-700 {
+  background-color: #fff;
+  color: #0a0a0a;
+}
+
+.acex-dark .text-blue-600,
+.acex-dark .text-blue-700 {
+  color: #f18a4b;
+}
+
+.acex-dark .border-blue-600 {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.acex-dark .bg-green-50,
+.acex-dark .bg-green-100,
+.acex-dark .bg-emerald-50 {
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+.acex-dark .bg-yellow-50,
+.acex-dark .bg-yellow-100,
+.acex-dark .bg-amber-50 {
+  background-color: rgba(245, 158, 11, 0.1);
+}
+
+.acex-dark .bg-red-50,
+.acex-dark .bg-red-100 {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.acex-dark .text-green-700,
+.acex-dark .text-green-800,
+.acex-dark .text-emerald-700,
+.acex-dark .text-emerald-800 {
+  color: #6ee7b7;
+}
+
+.acex-dark .text-yellow-700,
+.acex-dark .text-yellow-800,
+.acex-dark .text-amber-800,
+.acex-dark .text-amber-900 {
+  color: #fcd34d;
+}
+
+.acex-dark .text-red-700,
+.acex-dark .text-red-800 {
+  color: #fca5a5;
+}
+
+.acex-dark .hover\:bg-gray-50:hover,
+.acex-dark .hover\:bg-gray-100:hover,
+.acex-dark .hover\:bg-gray-200:hover,
+.acex-dark .hover\:bg-slate-50:hover,
+.acex-dark .hover\:bg-slate-100:hover,
+.acex-dark .hover\:bg-slate-200\/70:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.acex-dark .hover\:bg-blue-700:hover {
+  background-color: #d4d4d4;
+  color: #0a0a0a;
 }
 
 @keyframes acex-card-in {

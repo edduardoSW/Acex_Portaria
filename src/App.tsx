@@ -20,8 +20,8 @@ const GeneralManagerDashboard = lazy(() => import('./pages/GeneralManagerDashboa
 
 function PageLoader() {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+    <div className="flex min-h-screen items-center justify-center bg-black">
+      <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/15 border-t-acex-teal" />
     </div>
   );
 }
@@ -217,17 +217,19 @@ function App() {
     import.meta.env.VITE_SUPABASE_ANON_KEY !== 'placeholder-key';
 
   if (!isSupabaseConfigured) {
-    return <SetupScreen />;
+    return <div className="acex-dark min-h-screen"><SetupScreen /></div>;
   }
 
   return (
-    <AuthProvider>
-      <Router>
-        <Suspense fallback={<PageLoader />}>
-          <AppRoutes />
-        </Suspense>
-      </Router>
-    </AuthProvider>
+    <div className="acex-dark min-h-screen">
+      <AuthProvider>
+        <Router>
+          <Suspense fallback={<PageLoader />}>
+            <AppRoutes />
+          </Suspense>
+        </Router>
+      </AuthProvider>
+    </div>
   );
 }
 

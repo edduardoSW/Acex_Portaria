@@ -15,6 +15,7 @@ import {
   X,
 } from 'lucide-react';
 import { AcexCredit, AcexLogo } from '../components/AcexLogo';
+import { PricingSection } from '../components/ui/pricing-section';
 
 type PlanKey = 'essential' | 'professional' | 'enterprise' | 'custom';
 
@@ -282,38 +283,11 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="planos" className="bg-[#fbf8f4] py-20 lg:py-28">
-          <div className="mx-auto max-w-7xl px-5 sm:px-8">
-            <div className="mx-auto max-w-3xl text-center">
-              <p className="text-sm font-black uppercase tracking-[0.16em] text-acex-teal">Planos transparentes</p>
-              <h2 className="mt-4 text-3xl font-black tracking-tight text-acex-navy sm:text-4xl">Um plano para cada tamanho de condomínio.</h2>
-              <p className="mt-4 text-lg text-slate-600">Todos os planos incluem implantação assistida e 14 dias para experimentar.</p>
-            </div>
-            <div className="acex-stagger mt-12 grid gap-5 lg:grid-cols-3 lg:items-stretch">
-              {plans.map((plan) => (
-                <article key={plan.key} className={`acex-card-animate acex-interactive-card relative flex flex-col overflow-hidden rounded-[1.75rem] border p-6 sm:p-7 ${plan.featured ? 'border-acex-teal bg-acex-navy text-white shadow-[0_30px_70px_-35px_rgba(28,24,21,0.85)]' : 'border-[#ded4ca] bg-white shadow-acex'}`}>
-                  <div className={`absolute inset-x-0 top-0 h-1 ${plan.featured ? 'bg-acex-teal' : 'bg-gradient-to-r from-transparent via-acex-teal/35 to-transparent'}`} />
-                  <div className="flex items-start justify-between gap-3">
-                    <div><div className="flex items-center gap-3"><span className={`h-2.5 w-2.5 rounded-full ${plan.featured ? 'bg-acex-teal' : 'bg-acex-teal/70'}`} /><p className={`text-sm font-black uppercase tracking-[0.16em] ${plan.featured ? 'text-acex-teal' : 'text-acex-ink'}`}>{plan.name}</p></div><p className={`mt-2.5 text-sm font-semibold ${plan.featured ? 'text-white/55' : 'text-slate-500'}`}>{plan.range}</p></div>
-                    {plan.featured && <span className="shrink-0 rounded-full bg-acex-teal px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-acex-navy">Recomendado</span>}
-                  </div>
-                  <div className="mt-5 flex items-end gap-2"><span className="pb-1 text-base font-black">R$</span><span className="text-5xl font-black tracking-[-0.05em]">{plan.price}</span><span className={`pb-1.5 text-sm ${plan.featured ? 'text-white/45' : 'text-slate-400'}`}>/mês</span></div>
-                  <div className="mt-5 h-px bg-current/10" />
-                  <p className={`mt-5 text-sm leading-6 ${plan.featured ? 'text-white/65' : 'text-slate-600'}`}>{plan.description}</p>
-                  <ul className="mt-5 flex-1 space-y-2.5">
-                    {plan.features.map((feature) => <li key={feature} className="flex items-start gap-3 text-sm font-semibold"><span className={`grid h-5 w-5 shrink-0 place-items-center rounded-full ${plan.featured ? 'bg-acex-teal/15 text-acex-teal' : 'bg-acex-mint text-acex-teal'}`}><Check className="h-3 w-3" /></span><span className="pt-0.5">{feature}</span></li>)}
-                  </ul>
-                  <button onClick={() => scrollToLead(plan.key === 'essential' ? 150 : plan.key === 'professional' ? 350 : 600)} className={`mt-6 h-12 rounded-xl px-5 text-sm font-black transition ${plan.featured ? 'bg-acex-teal text-acex-navy hover:bg-white' : 'border border-acex-navy bg-acex-navy text-white hover:border-acex-teal hover:bg-acex-teal hover:text-acex-navy'}`}>Escolher {plan.name}</button>
-                  <p className={`mt-3 text-center text-[11px] font-bold uppercase tracking-wider ${plan.featured ? 'text-white/35' : 'text-slate-400'}`}>14 dias para testar</p>
-                </article>
-              ))}
-            </div>
-            <div className="mt-5 flex flex-col items-center justify-between gap-5 rounded-3xl border border-[#dfd5cb] bg-acex-cream p-6 text-center sm:flex-row sm:text-left">
-              <div><p className="font-black text-acex-navy">Mais de 600 unidades?</p><p className="mt-1 text-slate-500">Criamos uma proposta personalizada para o seu volume e estrutura.</p></div>
-              <button onClick={() => scrollToLead(601)} className="shrink-0 rounded-xl border border-acex-teal px-5 py-3 text-sm font-black text-acex-teal hover:bg-acex-teal hover:text-acex-navy">Solicitar proposta personalizada</button>
-            </div>
-          </div>
-        </section>
+        <PricingSection
+          plans={plans}
+          onSelect={(plan) => scrollToLead(plan.key === 'essential' ? 150 : plan.key === 'professional' ? 350 : 600)}
+          onCustom={() => scrollToLead(601)}
+        />
 
         <section id="simulacao" className="scroll-mt-20 bg-acex-cream py-20 lg:py-28">
           <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[.85fr_1.15fr] lg:items-start">
