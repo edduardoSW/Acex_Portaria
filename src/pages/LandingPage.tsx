@@ -257,16 +257,27 @@ export function LandingPage() {
               <h2 className="mt-4 text-3xl font-black tracking-tight sm:text-4xl">Uma implantação pensada para a rotina real.</h2>
               <p className="mt-5 text-lg leading-8 text-white/60">A estrutura acompanha o tamanho do condomínio e pode crescer junto com a operação.</p>
             </div>
-            <div className="relative grid gap-4 sm:grid-cols-3">
-              <div className="absolute left-[16.66%] right-[16.66%] top-[22px] hidden h-0.5 overflow-hidden bg-white/10 sm:block"><div className="h-full bg-acex-lime transition-all duration-700" style={{ width: `${(activeStep / 2) * 100}%` }} /></div>
-              {implementationSteps.map(({ title, text }, index) => (
-                <button type="button" onClick={() => setActiveStep(index)} key={title} className={`relative rounded-3xl border p-6 text-left transition-all duration-700 ${activeStep === index ? 'z-10 -translate-y-2 border-acex-lime/60 bg-white/[0.13] shadow-2xl shadow-black/15' : 'border-white/10 bg-white/[0.05] opacity-60 hover:opacity-90'}`}>
-                  <span className={`grid h-11 w-11 place-items-center rounded-full text-sm font-black transition-all duration-500 ${activeStep === index ? 'acex-step-pulse scale-110 bg-acex-lime text-acex-navy' : 'bg-white/10 text-white/60'}`}>{index + 1}</span>
-                  <h3 className={`mt-6 text-lg font-black transition-colors ${activeStep === index ? 'text-white' : 'text-white/70'}`}>{title}</h3>
-                  <p className={`mt-3 leading-7 transition-colors ${activeStep === index ? 'text-white/70' : 'text-white/40'}`}>{text}</p>
-                  <div className="mt-5 h-1 overflow-hidden rounded-full bg-white/10"><div className={`h-full bg-acex-lime transition-all duration-[2200ms] ease-linear ${activeStep === index ? 'w-full' : 'w-0'}`} /></div>
-                </button>
-              ))}
+            <div>
+              <div className="mb-6 flex items-center gap-4" aria-live="polite">
+                <span className="shrink-0 text-xs font-black uppercase tracking-[0.14em] text-white/55">Etapa {activeStep + 1} de 3</span>
+                <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10">
+                  <div key={activeStep} className="acex-step-loading h-full rounded-full bg-acex-lime" />
+                </div>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-3">
+                {implementationSteps.map(({ title, text }, index) => {
+                  const isActive = activeStep === index;
+                  const isComplete = index < activeStep;
+
+                  return (
+                    <button type="button" onClick={() => setActiveStep(index)} key={title} aria-current={isActive ? 'step' : undefined} className={`relative min-h-64 rounded-3xl border p-6 text-left transition-all duration-500 ${isActive ? '-translate-y-1 border-acex-lime/65 bg-white/[0.13] shadow-2xl shadow-black/15' : isComplete ? 'border-acex-teal/30 bg-white/[0.08]' : 'border-white/10 bg-white/[0.04] hover:border-white/25 hover:bg-white/[0.07]'}`}>
+                      <span className={`grid h-11 w-11 place-items-center rounded-full text-sm font-black transition-all duration-500 ${isActive ? 'acex-step-pulse scale-110 bg-acex-lime text-acex-navy' : isComplete ? 'bg-acex-teal text-acex-navy' : 'bg-white/10 text-white/65'}`}>{isComplete ? <Check className="h-4 w-4" /> : index + 1}</span>
+                      <h3 className={`mt-6 text-lg font-black transition-colors ${isActive ? 'text-white' : 'text-white/80'}`}>{title}</h3>
+                      <p className={`mt-3 leading-7 transition-colors ${isActive ? 'text-white/70' : 'text-white/50'}`}>{text}</p>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </section>
@@ -278,19 +289,22 @@ export function LandingPage() {
               <h2 className="mt-4 text-3xl font-black tracking-tight text-acex-navy sm:text-4xl">Um plano para cada tamanho de condomínio.</h2>
               <p className="mt-4 text-lg text-slate-600">Todos os planos incluem implantação assistida e 14 dias para experimentar.</p>
             </div>
-            <div className="acex-stagger mt-14 grid gap-6 lg:grid-cols-3 lg:items-stretch">
+            <div className="acex-stagger mt-12 grid gap-5 lg:grid-cols-3 lg:items-stretch">
               {plans.map((plan) => (
-                <article key={plan.key} className={`acex-card-animate acex-interactive-card relative flex flex-col overflow-hidden rounded-[1.75rem] border p-7 sm:p-8 ${plan.featured ? 'border-acex-teal bg-acex-navy text-white shadow-[0_30px_70px_-35px_rgba(28,24,21,0.85)] lg:-translate-y-3' : 'border-[#ded4ca] bg-white shadow-acex'}`}>
+                <article key={plan.key} className={`acex-card-animate acex-interactive-card relative flex flex-col overflow-hidden rounded-[1.75rem] border p-6 sm:p-7 ${plan.featured ? 'border-acex-teal bg-acex-navy text-white shadow-[0_30px_70px_-35px_rgba(28,24,21,0.85)]' : 'border-[#ded4ca] bg-white shadow-acex'}`}>
                   <div className={`absolute inset-x-0 top-0 h-1 ${plan.featured ? 'bg-acex-teal' : 'bg-gradient-to-r from-transparent via-acex-teal/35 to-transparent'}`} />
-                  {plan.featured && <span className="absolute right-5 top-5 rounded-full bg-acex-teal px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-acex-navy">Recomendado</span>}
-                  <div className="flex items-center gap-3"><span className={`h-2.5 w-2.5 rounded-full ${plan.featured ? 'bg-acex-teal' : 'bg-acex-teal/70'}`} /><p className={`text-sm font-black uppercase tracking-[0.16em] ${plan.featured ? 'text-acex-teal' : 'text-acex-ink'}`}>{plan.name}</p></div>
-                  <p className={`mt-3 text-sm font-semibold ${plan.featured ? 'text-white/50' : 'text-slate-500'}`}>{plan.range}</p>
-                  <div className="mt-7 border-y border-current/10 py-6"><div className="flex items-end gap-2"><span className="pb-1 text-lg font-black">R$</span><span className="text-5xl font-black tracking-[-0.05em]">{plan.price}</span><span className={`pb-1.5 text-sm ${plan.featured ? 'text-white/45' : 'text-slate-400'}`}>/mês</span></div><p className={`mt-2 text-xs font-bold uppercase tracking-wider ${plan.featured ? 'text-white/30' : 'text-slate-400'}`}>Cobrança mensal · 14 dias de teste</p></div>
-                  <p className={`mt-6 min-h-14 leading-7 ${plan.featured ? 'text-white/60' : 'text-slate-600'}`}>{plan.description}</p>
-                  <ul className="mt-7 flex-1 space-y-3.5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div><div className="flex items-center gap-3"><span className={`h-2.5 w-2.5 rounded-full ${plan.featured ? 'bg-acex-teal' : 'bg-acex-teal/70'}`} /><p className={`text-sm font-black uppercase tracking-[0.16em] ${plan.featured ? 'text-acex-teal' : 'text-acex-ink'}`}>{plan.name}</p></div><p className={`mt-2.5 text-sm font-semibold ${plan.featured ? 'text-white/55' : 'text-slate-500'}`}>{plan.range}</p></div>
+                    {plan.featured && <span className="shrink-0 rounded-full bg-acex-teal px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-acex-navy">Recomendado</span>}
+                  </div>
+                  <div className="mt-5 flex items-end gap-2"><span className="pb-1 text-base font-black">R$</span><span className="text-5xl font-black tracking-[-0.05em]">{plan.price}</span><span className={`pb-1.5 text-sm ${plan.featured ? 'text-white/45' : 'text-slate-400'}`}>/mês</span></div>
+                  <div className="mt-5 h-px bg-current/10" />
+                  <p className={`mt-5 text-sm leading-6 ${plan.featured ? 'text-white/65' : 'text-slate-600'}`}>{plan.description}</p>
+                  <ul className="mt-5 flex-1 space-y-2.5">
                     {plan.features.map((feature) => <li key={feature} className="flex items-start gap-3 text-sm font-semibold"><span className={`grid h-5 w-5 shrink-0 place-items-center rounded-full ${plan.featured ? 'bg-acex-teal/15 text-acex-teal' : 'bg-acex-mint text-acex-teal'}`}><Check className="h-3 w-3" /></span><span className="pt-0.5">{feature}</span></li>)}
                   </ul>
-                  <button onClick={() => scrollToLead(plan.key === 'essential' ? 150 : plan.key === 'professional' ? 350 : 600)} className={`mt-9 h-14 rounded-xl px-5 text-sm font-black transition ${plan.featured ? 'bg-acex-teal text-acex-navy hover:bg-white' : 'border border-acex-navy bg-acex-navy text-white hover:border-acex-teal hover:bg-acex-teal hover:text-acex-navy'}`}>Escolher {plan.name}</button>
+                  <button onClick={() => scrollToLead(plan.key === 'essential' ? 150 : plan.key === 'professional' ? 350 : 600)} className={`mt-6 h-12 rounded-xl px-5 text-sm font-black transition ${plan.featured ? 'bg-acex-teal text-acex-navy hover:bg-white' : 'border border-acex-navy bg-acex-navy text-white hover:border-acex-teal hover:bg-acex-teal hover:text-acex-navy'}`}>Escolher {plan.name}</button>
+                  <p className={`mt-3 text-center text-[11px] font-bold uppercase tracking-wider ${plan.featured ? 'text-white/35' : 'text-slate-400'}`}>14 dias para testar</p>
                 </article>
               ))}
             </div>

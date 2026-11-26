@@ -93,6 +93,16 @@
   animation: acex-step-pulse 1.8s ease-in-out infinite;
 }
 
+@keyframes acex-step-loading {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.acex-step-loading {
+  transform-origin: left;
+  animation: acex-step-loading 2.4s linear both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .acex-surface,
   .acex-card-animate {
@@ -101,8 +111,13 @@
 
   .acex-interactive-card,
   .acex-icon-tile,
-  .acex-step-pulse {
+  .acex-step-pulse,
+  .acex-step-loading {
     transition: none;
     animation: none;
+  }
+
+  .acex-step-loading {
+    transform: scaleX(1);
   }
 }

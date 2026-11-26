@@ -79,7 +79,7 @@ class handler(BaseHTTPRequestHandler):
             <div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#241e1a">
               <div style="background:#1c1815;padding:24px;border-radius:16px 16px 0 0">
                 <strong style="color:#fff;font-size:22px;letter-spacing:2px">ACEX PORTARIA</strong>
-                <p style="color:#e87532;margin:8px 0 0">by ACEX Partners · nova solicitação comercial</p>
+                <p style="color:#e87532;margin:8px 0 0">ACEX · nova solicitação comercial</p>
               </div>
               <div style="border:1px solid #dfe7e7;border-top:0;padding:28px;border-radius:0 0 16px 16px">
                 <h1 style="font-size:24px;margin:0 0 22px">{html.escape(condominium)}</h1>
