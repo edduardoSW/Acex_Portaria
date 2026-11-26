@@ -43,7 +43,7 @@ export function DoormanHome() {
   const greeting = new Date().getHours() < 12 ? 'Bom dia' : new Date().getHours() < 18 ? 'Boa tarde' : 'Boa noite';
 
   return (
-    <div className="min-h-screen bg-[#f5f8f8]">
+    <div className="min-h-screen bg-acex-cream">
       <header className="border-b border-slate-200/80 bg-white">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
           <AcexLogo />
@@ -75,13 +75,13 @@ export function DoormanHome() {
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[1.25fr_.75fr]">
           <section className="acex-surface overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-100 p-5 sm:p-6"><div><h2 className="text-lg font-black text-acex-ink">Aguardando retirada</h2><p className="mt-1 text-sm text-slate-500">Últimas encomendas pendentes.</p></div><Link to="/pendentes" className="rounded-xl bg-acex-mint px-4 py-2 text-sm font-black text-acex-teal hover:bg-acex-teal hover:text-white">Ver todas</Link></div>
+            <div className="flex items-center justify-between border-b border-slate-100 p-5 sm:p-6"><div><h2 className="text-lg font-black text-acex-ink">Aguardando retirada</h2><p className="mt-1 text-sm text-slate-500">Últimas encomendas pendentes.</p></div><Link to="/pendentes" className="rounded-xl bg-acex-mint px-4 py-2 text-sm font-black text-acex-teal hover:bg-acex-teal hover:text-acex-navy">Ver todas</Link></div>
             {recent.length === 0 ? <div className="grid min-h-64 place-items-center p-8 text-center"><div><CheckCircle2 className="mx-auto h-10 w-10 text-emerald-500" /><p className="mt-3 font-black text-acex-ink">Tudo em dia</p><p className="mt-1 text-sm text-slate-500">Nenhuma encomenda aguardando retirada.</p></div></div> : <div className="divide-y divide-slate-100">{recent.map((item) => <div key={item.id} className="flex items-center gap-4 px-5 py-4 sm:px-6"><div className="grid h-10 w-10 place-items-center rounded-xl bg-acex-mint text-acex-teal"><UserRound className="h-5 w-5" /></div><div className="min-w-0 flex-1"><p className="truncate font-bold text-acex-ink">{item.resident?.name || 'Morador'}</p><p className="text-sm text-slate-400">{item.resident ? `Bloco ${item.resident.block} · ${item.resident.apartment}` : 'Unidade não informada'}</p></div><div className="text-right"><p className="text-sm font-bold text-slate-600">{new Date(item.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p><p className="text-xs text-slate-400">{new Date(item.created_at).toLocaleDateString('pt-BR')}</p></div></div>)}</div>}
           </section>
 
           <section className="space-y-4">
             <h2 className="text-lg font-black text-acex-ink">Ações rápidas</h2>
-            <Link to="/nova-encomenda" className="acex-surface acex-interactive-card group flex items-center gap-4 p-5"><div className="acex-icon-tile grid h-12 w-12 place-items-center rounded-xl bg-acex-teal text-white"><Plus className="h-6 w-6" /></div><div><p className="font-black text-acex-ink">Nova encomenda</p><p className="text-sm text-slate-500">Registrar uma chegada</p></div></Link>
+            <Link to="/nova-encomenda" className="acex-surface acex-interactive-card group flex items-center gap-4 p-5"><div className="acex-icon-tile grid h-12 w-12 place-items-center rounded-xl bg-acex-teal text-acex-navy"><Plus className="h-6 w-6" /></div><div><p className="font-black text-acex-ink">Nova encomenda</p><p className="text-sm text-slate-500">Registrar uma chegada</p></div></Link>
             <Link to="/pendentes" className="acex-surface acex-interactive-card group flex items-center gap-4 p-5"><div className="acex-icon-tile grid h-12 w-12 place-items-center rounded-xl bg-amber-50 text-amber-600"><Clock3 className="h-6 w-6" /></div><div><p className="font-black text-acex-ink">Pendentes</p><p className="text-sm text-slate-500">Dar baixa em uma retirada</p></div></Link>
             <Link to="/historico" className="acex-surface acex-interactive-card group flex items-center gap-4 p-5"><div className="acex-icon-tile grid h-12 w-12 place-items-center rounded-xl bg-slate-100 text-slate-600"><History className="h-6 w-6" /></div><div><p className="font-black text-acex-ink">Histórico</p><p className="text-sm text-slate-500">Consultar movimentações</p></div></Link>
           </section>

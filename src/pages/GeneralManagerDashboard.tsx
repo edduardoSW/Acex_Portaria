@@ -252,7 +252,7 @@ export function GeneralManagerDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f8f8] lg:grid lg:grid-cols-[248px_1fr]">
+    <div className="min-h-screen bg-acex-cream lg:grid lg:grid-cols-[248px_1fr]">
       <aside
         className={`${mobileMenu ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-40 flex w-[248px] flex-col bg-acex-navy px-5 py-6 text-white transition-transform lg:sticky lg:top-0 lg:h-screen lg:translate-x-0`}
       >
@@ -320,7 +320,7 @@ export function GeneralManagerDashboard() {
           </div>
           <button
             onClick={() => setShowNewCondominium(true)}
-            className="flex h-11 items-center gap-2 rounded-xl bg-acex-teal px-4 text-sm font-bold text-white shadow-lg shadow-acex-teal/15 transition hover:bg-[#0b655e]"
+            className="flex h-11 items-center gap-2 rounded-xl bg-acex-teal px-4 text-sm font-bold text-acex-navy shadow-lg shadow-acex-teal/15 transition hover:bg-[#d56529]"
           >
             <Plus className="h-4 w-4" /> <span className="hidden sm:inline">Novo condomínio</span><span className="sm:hidden">Novo</span>
           </button>
@@ -537,7 +537,7 @@ export function GeneralManagerDashboard() {
             </div>
             <div className="flex justify-end gap-3 border-t border-slate-100 bg-slate-50/70 p-5">
               <button type="button" onClick={() => setShowNewCondominium(false)} className="h-11 rounded-xl px-5 text-sm font-bold text-slate-600 hover:bg-slate-200/70">Cancelar</button>
-              <button disabled={saving} className="flex h-11 items-center gap-2 rounded-xl bg-acex-teal px-5 text-sm font-bold text-white disabled:opacity-60">
+              <button disabled={saving} className="flex h-11 items-center gap-2 rounded-xl bg-acex-teal px-5 text-sm font-bold text-acex-navy disabled:opacity-60">
                 {saving && <Loader2 className="h-4 w-4 animate-spin" />} Criar condomínio
               </button>
             </div>

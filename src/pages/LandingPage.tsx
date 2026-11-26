@@ -137,70 +137,70 @@ export function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-acex-ink">
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur-xl">
+    <div className="min-h-screen bg-acex-cream text-acex-ink">
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-acex-navy/95 text-white backdrop-blur-xl">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
-          <a href="#inicio" aria-label="ACEX Portaria - início"><AcexLogo /></a>
+          <a href="#inicio" aria-label="ACEX Portaria - início"><AcexLogo inverse /></a>
           <nav className="hidden items-center gap-8 lg:flex" aria-label="Navegação da página">
-            <a href="#solucao" className="text-sm font-bold text-slate-600 hover:text-acex-teal">Solução</a>
-            <a href="#como-funciona" className="text-sm font-bold text-slate-600 hover:text-acex-teal">Como funciona</a>
-            <a href="#planos" className="text-sm font-bold text-slate-600 hover:text-acex-teal">Planos</a>
-            <a href="#duvidas" className="text-sm font-bold text-slate-600 hover:text-acex-teal">Dúvidas</a>
+            <a href="#solucao" className="text-sm font-bold text-acex-taupe hover:text-acex-teal">Solução</a>
+            <a href="#como-funciona" className="text-sm font-bold text-acex-taupe hover:text-acex-teal">Como funciona</a>
+            <a href="#planos" className="text-sm font-bold text-acex-taupe hover:text-acex-teal">Planos</a>
+            <a href="#duvidas" className="text-sm font-bold text-acex-taupe hover:text-acex-teal">Dúvidas</a>
           </nav>
           <div className="hidden items-center gap-3 lg:flex">
-            <Link to="/login" className="rounded-xl px-4 py-3 text-sm font-black text-acex-navy hover:bg-slate-100">Entrar</Link>
-            <button onClick={() => scrollToLead()} className="rounded-xl bg-acex-teal px-5 py-3 text-sm font-black text-white shadow-lg shadow-acex-teal/15 hover:bg-[#0b655e]">Simular meu plano</button>
+            <Link to="/login" className="rounded-xl px-4 py-3 text-sm font-black text-white hover:bg-white/10">Entrar</Link>
+            <button onClick={() => scrollToLead()} className="rounded-xl bg-acex-teal px-5 py-3 text-sm font-black text-acex-navy shadow-lg shadow-acex-teal/15 hover:bg-[#d56529]">Simular meu plano</button>
           </div>
-          <button onClick={() => setMobileMenu(!mobileMenu)} className="rounded-xl border border-slate-200 p-2.5 text-acex-navy lg:hidden" aria-label={mobileMenu ? 'Fechar menu' : 'Abrir menu'}>
+          <button onClick={() => setMobileMenu(!mobileMenu)} className="rounded-xl border border-white/15 p-2.5 text-white lg:hidden" aria-label={mobileMenu ? 'Fechar menu' : 'Abrir menu'}>
             {mobileMenu ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
         {mobileMenu && (
-          <div className="border-t border-slate-100 bg-white px-5 py-5 lg:hidden">
+          <div className="border-t border-white/10 bg-acex-navy px-5 py-5 lg:hidden">
             <nav className="grid gap-1">
               {['solucao', 'como-funciona', 'planos', 'duvidas'].map((item) => (
-                <a key={item} href={`#${item}`} onClick={() => setMobileMenu(false)} className="rounded-xl px-3 py-3 font-bold capitalize text-slate-600 hover:bg-slate-50">{item.replace('-', ' ')}</a>
+                <a key={item} href={`#${item}`} onClick={() => setMobileMenu(false)} className="rounded-xl px-3 py-3 font-bold capitalize text-acex-taupe hover:bg-white/10 hover:text-white">{item.replace('-', ' ')}</a>
               ))}
-              <Link to="/login" className="mt-2 rounded-xl border border-slate-200 px-4 py-3 text-center font-black text-acex-navy">Entrar no sistema</Link>
+              <Link to="/login" className="mt-2 rounded-xl border border-white/15 px-4 py-3 text-center font-black text-white">Entrar no sistema</Link>
             </nav>
           </div>
         )}
       </header>
 
       <main>
-        <section id="inicio" className="relative overflow-hidden bg-white pb-20 pt-32 sm:pt-40 lg:pb-28">
-          <div className="absolute right-0 top-20 h-[560px] w-[35%] bg-acex-mint/55" />
+        <section id="inicio" className="relative overflow-hidden bg-acex-navy pb-20 pt-32 text-white sm:pt-40 lg:pb-28">
+          <div className="absolute right-0 top-20 h-[560px] w-[35%] bg-acex-teal/[0.05]" />
           <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 sm:px-8 lg:grid-cols-[1.05fr_.95fr]">
             <div>
-              <h1 className="max-w-3xl text-4xl font-black leading-[1.04] tracking-[-0.045em] text-acex-navy sm:text-5xl lg:text-6xl">
+              <h1 className="max-w-3xl text-4xl font-black leading-[1.04] tracking-[-0.045em] text-acex-cream sm:text-5xl lg:text-6xl">
                 Encomendas sob controle. <span className="text-acex-teal">Portaria sem ruído.</span>
               </h1>
-              <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
+              <p className="mt-6 max-w-xl text-lg leading-8 text-acex-taupe">
                 A ACEX conecta portaria, moradores e administração para cada encomenda chegar ao destino certo, com registro e rastreabilidade.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <button onClick={() => scrollToLead()} className="h-14 rounded-xl bg-acex-teal px-7 text-base font-black text-white shadow-xl shadow-acex-teal/20 hover:bg-[#0b655e]">Calcular investimento</button>
-                <a href="#como-funciona" className="grid h-14 place-items-center rounded-xl border border-slate-200 px-7 text-base font-black text-acex-navy hover:border-acex-teal hover:text-acex-teal">Conhecer a solução</a>
+                <button onClick={() => scrollToLead()} className="h-14 rounded-xl bg-acex-teal px-7 text-base font-black text-acex-navy shadow-xl shadow-black/20 hover:bg-[#d56529]">Calcular investimento</button>
+                <a href="#como-funciona" className="grid h-14 place-items-center rounded-xl border border-white/15 px-7 text-base font-black text-white hover:border-acex-teal hover:text-acex-teal">Conhecer a solução</a>
               </div>
             </div>
 
             <div className="relative">
-              <div className="absolute -inset-5 rotate-2 rounded-[2rem] bg-acex-navy" />
-              <div className="relative overflow-hidden rounded-[1.7rem] border border-white/20 bg-[#f7faf9] p-4 shadow-2xl sm:p-6">
-                <div className="flex items-center justify-between rounded-2xl bg-white p-4 shadow-sm">
-                  <div><p className="font-black tracking-wide text-acex-navy">ACEX PORTARIA</p><p className="text-xs text-slate-400">by ACEX Partners · operação em tempo real</p></div>
+              <div className="absolute -inset-5 rotate-2 rounded-[2rem] bg-acex-teal" />
+              <div className="relative overflow-hidden rounded-[1.7rem] border border-white/10 bg-acex-panel p-4 shadow-2xl sm:p-6">
+                <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-[#211c19] p-4 shadow-sm">
+                  <div><p className="font-black tracking-wide text-white">ACEX PORTARIA</p><p className="text-xs text-acex-taupe">by ACEX Partners · operação em tempo real</p></div>
                   <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">Online</span>
                 </div>
                 <div className="mt-4 grid grid-cols-3 gap-3">
                   {[['Hoje', '18'], ['Pendentes', '7'], ['Entregues', '11']].map(([label, value], index) => (
-                    <div key={label} className={`rounded-2xl p-4 ${index === 1 ? 'bg-acex-teal text-white' : 'bg-white'}`}><p className={`text-xs font-bold ${index === 1 ? 'text-white/60' : 'text-slate-400'}`}>{label}</p><p className="mt-2 text-2xl font-black">{value}</p></div>
+                    <div key={label} className={`rounded-2xl border border-white/5 p-4 ${index === 1 ? 'bg-acex-teal text-acex-navy' : 'bg-[#211c19] text-white'}`}><p className={`text-xs font-bold ${index === 1 ? 'text-acex-navy/60' : 'text-acex-taupe'}`}>{label}</p><p className="mt-2 text-2xl font-black">{value}</p></div>
                   ))}
                 </div>
-                <div className="mt-4 rounded-2xl bg-white p-5">
-                  <div className="flex items-center justify-between"><p className="font-black text-acex-navy">Últimas encomendas</p><span className="text-xs font-bold text-acex-teal">Atualizado agora</span></div>
+                <div className="mt-4 rounded-2xl border border-white/5 bg-[#211c19] p-5">
+                  <div className="flex items-center justify-between"><p className="font-black text-white">Últimas encomendas</p><span className="text-xs font-bold text-acex-teal">Atualizado agora</span></div>
                   <div className="mt-4 space-y-3">
                     {[['MA', 'Marina Alves', 'Bloco B · 204', 'Avisado'], ['RS', 'Rafael Souza', 'Torre 1 · 803', 'Pendente'], ['CL', 'Carla Lima', 'Bloco A · 102', 'Retirado']].map(([initials, name, unit, state], index) => (
-                      <div key={name} className="flex items-center gap-3 rounded-xl border border-slate-100 p-3"><div className="grid h-9 w-9 place-items-center rounded-lg bg-acex-mint text-xs font-black text-acex-teal">{initials}</div><div className="min-w-0 flex-1"><p className="truncate text-sm font-black text-acex-ink">{name}</p><p className="text-xs text-slate-400">{unit}</p></div><span className={`text-xs font-bold ${index === 1 ? 'text-amber-600' : index === 2 ? 'text-slate-400' : 'text-acex-teal'}`}>{state}</span></div>
+                      <div key={name} className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3"><div className="grid h-9 w-9 place-items-center rounded-lg bg-acex-teal/15 text-xs font-black text-acex-teal">{initials}</div><div className="min-w-0 flex-1"><p className="truncate text-sm font-black text-white">{name}</p><p className="text-xs text-acex-taupe">{unit}</p></div><span className={`text-xs font-bold ${index === 1 ? 'text-amber-500' : index === 2 ? 'text-acex-taupe' : 'text-acex-teal'}`}>{state}</span></div>
                     ))}
                   </div>
                 </div>
@@ -209,7 +209,7 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="solucao" className="bg-[#f5f8f8] py-20 lg:py-28">
+        <section id="solucao" className="bg-acex-cream py-20 lg:py-28">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <div className="max-w-2xl">
               <p className="text-sm font-black uppercase tracking-[0.16em] text-acex-teal">Uma rotina que flui</p>
@@ -254,7 +254,7 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="planos" className="bg-white py-20 lg:py-28">
+        <section id="planos" className="bg-[#fbf8f4] py-20 lg:py-28">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <div className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-black uppercase tracking-[0.16em] text-acex-teal">Planos transparentes</p>
@@ -272,18 +272,18 @@ export function LandingPage() {
                   <ul className="mt-7 flex-1 space-y-3">
                     {plan.features.map((feature) => <li key={feature} className="flex items-start gap-3 text-sm font-semibold"><Check className={`mt-0.5 h-4 w-4 shrink-0 ${plan.featured ? 'text-acex-lime' : 'text-acex-teal'}`} />{feature}</li>)}
                   </ul>
-                  <button onClick={() => scrollToLead(plan.key === 'essential' ? 150 : plan.key === 'professional' ? 350 : 600)} className={`mt-8 h-12 rounded-xl text-sm font-black ${plan.featured ? 'bg-acex-lime text-acex-navy hover:bg-white' : 'bg-acex-teal text-white hover:bg-acex-navy'}`}>Escolher {plan.name}</button>
+                  <button onClick={() => scrollToLead(plan.key === 'essential' ? 150 : plan.key === 'professional' ? 350 : 600)} className={`mt-8 h-12 rounded-xl text-sm font-black ${plan.featured ? 'bg-acex-lime text-acex-navy hover:bg-white' : 'bg-acex-teal text-acex-navy hover:bg-acex-navy hover:text-white'}`}>Escolher {plan.name}</button>
                 </article>
               ))}
             </div>
-            <div className="mt-5 flex flex-col items-center justify-between gap-5 rounded-3xl border border-slate-200 bg-[#f5f8f8] p-6 text-center sm:flex-row sm:text-left">
+            <div className="mt-5 flex flex-col items-center justify-between gap-5 rounded-3xl border border-[#dfd5cb] bg-acex-cream p-6 text-center sm:flex-row sm:text-left">
               <div><p className="font-black text-acex-navy">Mais de 600 unidades?</p><p className="mt-1 text-slate-500">Criamos uma proposta personalizada para o seu volume e estrutura.</p></div>
-              <button onClick={() => scrollToLead(601)} className="shrink-0 rounded-xl border border-acex-teal px-5 py-3 text-sm font-black text-acex-teal hover:bg-acex-teal hover:text-white">Solicitar proposta personalizada</button>
+              <button onClick={() => scrollToLead(601)} className="shrink-0 rounded-xl border border-acex-teal px-5 py-3 text-sm font-black text-acex-teal hover:bg-acex-teal hover:text-acex-navy">Solicitar proposta personalizada</button>
             </div>
           </div>
         </section>
 
-        <section id="simulacao" className="scroll-mt-20 bg-[#f5f8f8] py-20 lg:py-28">
+        <section id="simulacao" className="scroll-mt-20 bg-acex-cream py-20 lg:py-28">
           <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[.85fr_1.15fr] lg:items-start">
             <div className="lg:sticky lg:top-28">
               <p className="text-sm font-black uppercase tracking-[0.16em] text-acex-teal">Simule agora</p>
@@ -315,13 +315,13 @@ export function LandingPage() {
               <div className="mt-6 rounded-2xl bg-acex-mint/70 p-4 text-sm text-acex-navy"><strong>{selectedPlan.name}</strong> para <strong>{units} unidades</strong>{selectedPlan.price ? <> · investimento estimado de <strong>R$ {selectedPlan.price}/mês</strong></> : <> · valor personalizado</>}.</div>
               {error && <p className="mt-4 rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-700">{error}</p>}
               {sent && <div className="mt-4 flex items-start gap-3 rounded-xl bg-emerald-50 p-4 text-emerald-800"><CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" /><p className="text-sm font-semibold">Solicitação enviada. Nossa equipe entrará em contato com você.</p></div>}
-              <button disabled={sending} className="mt-6 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-acex-teal text-base font-black text-white shadow-lg shadow-acex-teal/15 hover:bg-[#0b655e] disabled:cursor-not-allowed disabled:opacity-60">{sending && <Loader2 className="h-5 w-5 animate-spin" />}Enviar e receber proposta</button>
+              <button disabled={sending} className="mt-6 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-acex-teal text-base font-black text-acex-navy shadow-lg shadow-acex-teal/15 hover:bg-[#d56529] disabled:cursor-not-allowed disabled:opacity-60">{sending && <Loader2 className="h-5 w-5 animate-spin" />}Enviar e receber proposta</button>
               <p className="mt-4 text-center text-xs leading-5 text-slate-400">Ao enviar, você autoriza o contato da equipe ACEX sobre esta proposta.</p>
             </form>
           </div>
         </section>
 
-        <section id="duvidas" className="bg-white py-20 lg:py-28">
+        <section id="duvidas" className="bg-[#fbf8f4] py-20 lg:py-28">
           <div className="mx-auto max-w-3xl px-5 sm:px-8">
             <div className="text-center"><p className="text-sm font-black uppercase tracking-[0.16em] text-acex-teal">Dúvidas frequentes</p><h2 className="mt-4 text-3xl font-black text-acex-navy">Antes de começar</h2></div>
             <div className="mt-10 divide-y divide-slate-200 border-y border-slate-200">

@@ -218,7 +218,7 @@ export function Login() {
                   <button
                     type="submit"
                     disabled={forgotLoading}
-                    className="group relative flex h-14 w-full justify-center rounded-xl bg-acex-teal px-4 py-4 text-base font-bold text-white transition-colors hover:bg-[#0b655e] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="group relative flex h-14 w-full justify-center rounded-xl bg-acex-teal px-4 py-4 text-base font-bold text-acex-navy transition-colors hover:bg-[#d56529] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {forgotLoading ? 'Enviando...' : 'Enviar solicitação'}
                   </button>
@@ -286,7 +286,7 @@ export function Login() {
               <button
                 type="submit"
                 disabled={isLoginDisabled}
-                className="group relative flex h-14 w-full justify-center rounded-xl bg-acex-teal px-4 py-4 text-base font-bold text-white shadow-lg shadow-acex-teal/15 transition-colors hover:bg-[#0b655e] disabled:cursor-not-allowed disabled:opacity-50"
+                className="group relative flex h-14 w-full justify-center rounded-xl bg-acex-teal px-4 py-4 text-base font-bold text-acex-navy shadow-lg shadow-acex-teal/15 transition-colors hover:bg-[#d56529] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading ? 'Entrando...' : 'Entrar'}
               </button>

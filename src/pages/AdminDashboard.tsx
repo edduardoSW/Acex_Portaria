@@ -113,7 +113,7 @@ export function AdminDashboard() {
   const deliveryRate = useMemo(() => stats.weekTotal ? Math.round((stats.weekDelivered / stats.weekTotal) * 100) : 0, [stats]);
 
   return (
-    <div className="min-h-screen bg-[#f5f8f8]">
+    <div className="min-h-screen bg-acex-cream">
       <header className="border-b border-slate-200/80 bg-white">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
           <AcexLogo />
@@ -143,7 +143,7 @@ export function AdminDashboard() {
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[1.3fr_.7fr]">
           <section className="acex-surface overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-100 p-6"><div><h2 className="text-lg font-black text-acex-ink">Movimentações recentes</h2><p className="mt-1 text-sm text-slate-500">Últimas encomendas registradas.</p></div><Link to="/admin/encomendas" className="rounded-xl bg-acex-mint px-4 py-2 text-sm font-black text-acex-teal hover:bg-acex-teal hover:text-white">Ver histórico</Link></div>
+            <div className="flex items-center justify-between border-b border-slate-100 p-6"><div><h2 className="text-lg font-black text-acex-ink">Movimentações recentes</h2><p className="mt-1 text-sm text-slate-500">Últimas encomendas registradas.</p></div><Link to="/admin/encomendas" className="rounded-xl bg-acex-mint px-4 py-2 text-sm font-black text-acex-teal hover:bg-acex-teal hover:text-acex-navy">Ver histórico</Link></div>
             {recentPackages.length === 0 ? <div className="grid min-h-64 place-items-center text-sm text-slate-500">Nenhuma movimentação encontrada.</div> : <div className="divide-y divide-slate-100">{recentPackages.map((item) => <div key={item.id} className="flex items-center gap-4 px-6 py-4"><div className={`grid h-10 w-10 place-items-center rounded-xl ${item.status === 'delivered' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>{item.status === 'delivered' ? <CheckCircle2 className="h-5 w-5" /> : <Clock3 className="h-5 w-5" />}</div><div className="min-w-0 flex-1"><p className="truncate font-bold text-acex-ink">{item.resident?.name || 'Morador'}</p><p className="text-sm text-slate-400">{item.resident ? `Bloco ${item.resident.block} · ${item.resident.apartment}` : 'Unidade não informada'}</p></div><div className="text-right"><p className={`text-xs font-black ${item.status === 'delivered' ? 'text-emerald-600' : 'text-amber-600'}`}>{item.status === 'delivered' ? 'Entregue' : 'Pendente'}</p><p className="mt-1 text-xs text-slate-400">{new Date(item.created_at).toLocaleDateString('pt-BR')}</p></div></div>)}</div>}
           </section>
 

@@ -71,15 +71,15 @@ class handler(BaseHTTPRequestHandler):
             price_text = f"R$ {plan_price}/mês" if plan_price else "Proposta personalizada"
             safe_message = html.escape(message).replace("\n", "<br>")
             message_block = (
-                f'<div style="margin-top:22px;padding:18px;background:#f5f8f8;border-radius:12px">'
+                f'<div style="margin-top:22px;padding:18px;background:#f4efe8;border-radius:12px">'
                 f'<strong>Mensagem</strong><p style="line-height:1.6;margin-bottom:0">{safe_message}</p></div>'
                 if safe_message else ""
             )
             email_html = f"""
-            <div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#102b38">
-              <div style="background:#0a3142;padding:24px;border-radius:16px 16px 0 0">
+            <div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#241e1a">
+              <div style="background:#1c1815;padding:24px;border-radius:16px 16px 0 0">
                 <strong style="color:#fff;font-size:22px;letter-spacing:2px">ACEX PORTARIA</strong>
-                <p style="color:#c4e62f;margin:8px 0 0">by ACEX Partners · nova solicitação comercial</p>
+                <p style="color:#e87532;margin:8px 0 0">by ACEX Partners · nova solicitação comercial</p>
               </div>
               <div style="border:1px solid #dfe7e7;border-top:0;padding:28px;border-radius:0 0 16px 16px">
                 <h1 style="font-size:24px;margin:0 0 22px">{html.escape(condominium)}</h1>
