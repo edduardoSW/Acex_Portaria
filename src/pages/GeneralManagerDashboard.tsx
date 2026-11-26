@@ -22,6 +22,16 @@ import { supabase } from '../lib/supabase';
 
 type SubscriptionStatus = 'trial' | 'active' | 'overdue' | 'cancelled';
 type Plan = 'essential' | 'professional' | 'enterprise';
+type ManagerView = 'overview' | 'condominiums' | 'subscriptions' | 'team';
+
+type ManagedProfile = {
+  id: string;
+  name: string;
+  email: string;
+  role: 'general_manager' | 'admin' | 'doorman';
+  status: 'active' | 'inactive';
+  condominium_id: string | null;
+};
 
 type ManagedCondominium = {
   id: string;
@@ -133,6 +143,23 @@ export function GeneralManagerDashboard() {
   const [showNewCondominium, setShowNewCondominium] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
   const [selected, setSelected] = useState<ManagedCondominium | null>(null);
+  const [activeView, setActiveView] = useState<ManagerView>('overview');
+  const [teamMembers, setTeamMembers] = useState<ManagedProfile[]>([]);
+
+  const viewTitles: Record<ManagerView, string> = {
+    overview: 'Visão geral',
+    condominiums: 'Condomínios',
+    subscriptions: 'Assinaturas',
+    team: 'Equipe e acessos',
+  };
+
+  function changeView(view: ManagerView) {
+    setActiveView(view);
+    setMobileMenu(false);
+    setSearch('');
+    setStatus('all');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
   async function loadCondominiums() {
     setLoading(true);
@@ -140,7 +167,7 @@ export function GeneralManagerDashboard() {
 
     const [{ data: condominiumRows, error: condominiumError }, { data: profiles }] = await Promise.all([
       supabase.from('condominiums').select('*').order('created_at', { ascending: false }),
-      supabase.from('profiles').select('condominium_id'),
+      supabase.from('profiles').select('id, name, email, role, status, condominium_id').order('name'),
     ]);
 
     if (condominiumError) {
@@ -153,6 +180,8 @@ export function GeneralManagerDashboard() {
       if (item.condominium_id) acc[item.condominium_id] = (acc[item.condominium_id] ?? 0) + 1;
       return acc;
     }, {});
+
+    setTeamMembers((profiles ?? []) as ManagedProfile[]);
 
     setCondominiums(
       (condominiumRows ?? []).map((row) =>
@@ -246,22 +275,27 @@ export function GeneralManagerDashboard() {
         </div>
 
         <nav className="mt-8 space-y-1" aria-label="Navegação principal">
-          <a href="#visao-geral" className="flex items-center gap-3 rounded-xl bg-white px-3 py-3 text-sm font-bold text-acex-navy">
-            <LayoutDashboard className="h-5 w-5" /> Visão geral
-          </a>
-          <a href="#condominios" className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-white/65 transition hover:bg-white/10 hover:text-white">
-            <Building2 className="h-5 w-5" /> Condomínios
-          </a>
-          <a href="#assinaturas" className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-white/65 transition hover:bg-white/10 hover:text-white">
-            <CreditCard className="h-5 w-5" /> Assinaturas
-          </a>
-          <a href="#equipe" className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-white/65 transition hover:bg-white/10 hover:text-white">
-            <UsersRound className="h-5 w-5" /> Equipe ACEX
-          </a>
+          {([
+            ['overview', 'Visão geral', LayoutDashboard],
+            ['condominiums', 'Condomínios', Building2],
+            ['subscriptions', 'Assinaturas', CreditCard],
+            ['team', 'Equipe e acessos', UsersRound],
+          ] as const).map(([view, label, Icon]) => (
+            <button
+              key={view}
+              type="button"
+              onClick={() => changeView(view)}
+              className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm transition ${
+                activeView === view ? 'bg-white font-black text-acex-navy' : 'font-semibold text-white/65 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <Icon className="h-5 w-5" /> {label}
+            </button>
+          ))}
         </nav>
 
         <div className="mt-auto space-y-1 border-t border-white/10 pt-5">
-          <button className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-white/65 hover:bg-white/10 hover:text-white">
+          <button type="button" onClick={() => window.alert('Para suporte, envie um e-mail para a equipe ACEX responsável pela sua conta.')} className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-white/65 hover:bg-white/10 hover:text-white">
             <CircleHelp className="h-5 w-5" /> Central de ajuda
           </button>
           <button onClick={signOut} className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-white/65 hover:bg-white/10 hover:text-white">
@@ -280,7 +314,7 @@ export function GeneralManagerDashboard() {
             </button>
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-acex-teal">Operação ACEX</p>
-              <h1 className="text-lg font-black text-acex-ink sm:text-xl">Gerenciador geral</h1>
+              <h1 className="text-lg font-black text-acex-ink sm:text-xl">{viewTitles[activeView]}</h1>
             </div>
           </div>
           <button
@@ -292,7 +326,7 @@ export function GeneralManagerDashboard() {
         </header>
 
         <div className="mx-auto max-w-[1500px] p-5 md:p-8 lg:p-10" id="visao-geral">
-          <section className="relative overflow-hidden rounded-3xl bg-acex-navy p-6 text-white shadow-acex md:p-8">
+          {activeView === 'overview' && <section className="relative overflow-hidden rounded-3xl bg-acex-navy p-6 text-white shadow-acex md:p-8">
             <div className="absolute -right-16 -top-28 h-72 w-72 rounded-full border-[48px] border-white/[0.04]" />
             <div className="relative max-w-2xl">
               <span className="inline-flex rounded-full bg-acex-lime px-3 py-1 text-xs font-black uppercase tracking-[0.14em] text-acex-navy">
@@ -303,14 +337,14 @@ export function GeneralManagerDashboard() {
                 Acompanhe adesões, períodos de teste, recorrência e pendências em um único lugar.
               </p>
             </div>
-          </section>
+          </section>}
 
-          <section className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Indicadores">
+          {activeView !== 'team' && <section className={`${activeView === 'overview' ? 'mt-6' : ''} grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4`} aria-label="Indicadores">
             <MetricCard label="Condomínios" value={String(condominiums.length)} helper="Total na carteira" icon={<Building2 className="h-5 w-5" />} accent="bg-acex-mint text-acex-teal" />
             <MetricCard label="Assinaturas ativas" value={String(metrics.active)} helper={`${metrics.trial} em período de teste`} icon={<CheckCircle2 className="h-5 w-5" />} accent="bg-emerald-50 text-emerald-600" />
             <MetricCard label="Receita mensal" value={currency.format(metrics.mrr)} helper="Receita recorrente estimada" icon={<CreditCard className="h-5 w-5" />} accent="bg-sky-50 text-sky-600" />
             <MetricCard label="Atenção necessária" value={String(metrics.overdue)} helper="Pagamentos pendentes" icon={<AlertTriangle className="h-5 w-5" />} accent="bg-amber-50 text-amber-600" />
-          </section>
+          </section>}
 
           {error && (
             <div className="mt-6 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
@@ -319,11 +353,43 @@ export function GeneralManagerDashboard() {
             </div>
           )}
 
+          {activeView === 'team' ? (
+            <section className="acex-surface overflow-hidden">
+              <div className="border-b border-slate-100 p-6">
+                <h2 className="text-xl font-black text-acex-ink">Equipe e acessos</h2>
+                <p className="mt-1 text-sm text-slate-500">Visão consolidada dos administradores e porteiros de toda a carteira.</p>
+              </div>
+              {teamMembers.length === 0 ? (
+                <div className="grid min-h-64 place-items-center text-sm text-slate-500">Nenhum usuário encontrado.</div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[720px] text-left">
+                    <thead className="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-400">
+                      <tr><th className="px-6 py-4">Usuário</th><th className="px-4 py-4">Perfil</th><th className="px-4 py-4">Condomínio</th><th className="px-4 py-4">Status</th></tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {teamMembers.map((member) => {
+                        const condominium = condominiums.find((item) => item.id === member.condominium_id);
+                        return (
+                          <tr key={member.id} className="hover:bg-slate-50/70">
+                            <td className="px-6 py-4"><p className="font-bold text-acex-ink">{member.name}</p><p className="text-sm text-slate-400">{member.email}</p></td>
+                            <td className="px-4 py-4 text-sm font-semibold text-slate-600">{member.role === 'general_manager' ? 'Gerenciador geral' : member.role === 'admin' ? 'Síndico / Admin' : 'Porteiro'}</td>
+                            <td className="px-4 py-4 text-sm text-slate-500">{condominium?.name || 'Equipe ACEX'}</td>
+                            <td className="px-4 py-4"><span className={`rounded-full px-2.5 py-1 text-xs font-bold ${member.status === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>{member.status === 'active' ? 'Ativo' : 'Inativo'}</span></td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </section>
+          ) : (
           <section className="acex-surface mt-6 overflow-hidden" id="condominios">
             <div className="flex flex-col gap-4 border-b border-slate-100 p-5 md:flex-row md:items-center md:justify-between md:p-6">
               <div>
-                <h2 className="text-lg font-black text-acex-ink">Condomínios</h2>
-                <p className="mt-1 text-sm text-slate-500">Clientes, planos e situação comercial.</p>
+                <h2 className="text-lg font-black text-acex-ink">{activeView === 'subscriptions' ? 'Assinaturas' : 'Condomínios'}</h2>
+                <p className="mt-1 text-sm text-slate-500">{activeView === 'subscriptions' ? 'Planos, valores e situação de cobrança da carteira.' : 'Clientes, planos e situação comercial.'}</p>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row">
                 <label className="relative block sm:w-64">
@@ -417,6 +483,7 @@ export function GeneralManagerDashboard() {
               <span className="font-semibold text-acex-teal">Carteira ACEX</span>
             </div>
           </section>
+          )}
         </div>
       </main>
 
