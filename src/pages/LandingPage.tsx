@@ -6,6 +6,7 @@ import {
   Check,
   CheckCircle2,
   ChevronDown,
+  Clock3,
   KeyRound,
   Loader2,
   Menu,
@@ -184,24 +185,40 @@ export function LandingPage() {
               </div>
             </div>
 
-            <div className="relative">
-              <div className="absolute -inset-5 rotate-2 rounded-[2rem] bg-acex-teal" />
-              <div className="relative overflow-hidden rounded-[1.7rem] border border-white/10 bg-acex-panel p-4 shadow-2xl sm:p-6">
-                <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-[#211c19] p-4 shadow-sm">
-                  <div><p className="font-black tracking-wide text-white">ACEX PORTARIA</p><p className="text-xs text-acex-taupe">by ACEX Partners · operação em tempo real</p></div>
-                  <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">Online</span>
-                </div>
-                <div className="mt-4 grid grid-cols-3 gap-3">
-                  {[['Hoje', '18'], ['Pendentes', '7'], ['Entregues', '11']].map(([label, value], index) => (
-                    <div key={label} className={`rounded-2xl border border-white/5 p-4 ${index === 1 ? 'bg-acex-teal text-acex-navy' : 'bg-[#211c19] text-white'}`}><p className={`text-xs font-bold ${index === 1 ? 'text-acex-navy/60' : 'text-acex-taupe'}`}>{label}</p><p className="mt-2 text-2xl font-black">{value}</p></div>
-                  ))}
-                </div>
-                <div className="mt-4 rounded-2xl border border-white/5 bg-[#211c19] p-5">
-                  <div className="flex items-center justify-between"><p className="font-black text-white">Últimas encomendas</p><span className="text-xs font-bold text-acex-teal">Atualizado agora</span></div>
-                  <div className="mt-4 space-y-3">
-                    {[['MA', 'Marina Alves', 'Bloco B · 204', 'Avisado'], ['RS', 'Rafael Souza', 'Torre 1 · 803', 'Pendente'], ['CL', 'Carla Lima', 'Bloco A · 102', 'Retirado']].map(([initials, name, unit, state], index) => (
-                      <div key={name} className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3"><div className="grid h-9 w-9 place-items-center rounded-lg bg-acex-teal/15 text-xs font-black text-acex-teal">{initials}</div><div className="min-w-0 flex-1"><p className="truncate text-sm font-black text-white">{name}</p><p className="text-xs text-acex-taupe">{unit}</p></div><span className={`text-xs font-bold ${index === 1 ? 'text-amber-500' : index === 2 ? 'text-acex-taupe' : 'text-acex-teal'}`}>{state}</span></div>
-                    ))}
+            <div className="relative lg:pl-4">
+              <div className="absolute -inset-8 rounded-full bg-acex-teal/15 blur-3xl" />
+              <div className="relative rounded-[2rem] border border-white/10 bg-[#0f0d0c] p-2 shadow-[0_35px_90px_-35px_rgba(0,0,0,0.9)]">
+                <div className="overflow-hidden rounded-[1.55rem] border border-white/10 bg-[#171310]">
+                  <div className="flex h-10 items-center justify-between border-b border-white/10 px-4">
+                    <div className="flex gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-acex-teal" /><span className="h-2.5 w-2.5 rounded-full bg-[#564b43]" /><span className="h-2.5 w-2.5 rounded-full bg-[#564b43]" /></div>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/25">Painel operacional</span>
+                  </div>
+                  <div className="p-4 sm:p-5">
+                    <div className="flex items-center justify-between">
+                      <div><p className="font-black tracking-[0.08em] text-white">ACEX <span className="text-acex-teal">PORTARIA</span></p><p className="mt-1 text-xs text-acex-taupe">Visão geral · atualização em tempo real</p></div>
+                      <span className="flex items-center gap-2 rounded-full border border-emerald-400/15 bg-emerald-400/10 px-3 py-1.5 text-xs font-bold text-emerald-400"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />Online</span>
+                    </div>
+                    <div className="mt-5 grid grid-cols-3 gap-2.5 sm:gap-3">
+                      {[
+                        { label: 'Recebidas', value: '18', icon: PackageCheck },
+                        { label: 'Pendentes', value: '7', icon: Clock3 },
+                        { label: 'Entregues', value: '11', icon: CheckCircle2 },
+                      ].map(({ label, value, icon: Icon }, index) => (
+                        <div key={label} className={`rounded-2xl border p-3 sm:p-4 ${index === 1 ? 'border-acex-teal/40 bg-acex-teal text-acex-navy' : 'border-white/[0.07] bg-white/[0.035] text-white'}`}>
+                          <div className="flex items-center justify-between"><p className={`text-[10px] font-black uppercase tracking-wider ${index === 1 ? 'text-acex-navy/60' : 'text-acex-taupe'}`}>{label}</p><Icon className="hidden h-4 w-4 opacity-50 sm:block" /></div>
+                          <p className="mt-3 text-2xl font-black sm:text-3xl">{value}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-4 rounded-2xl border border-white/[0.07] bg-white/[0.035] p-4 sm:p-5">
+                      <div className="flex items-center justify-between"><div><p className="font-black text-white">Últimas encomendas</p><p className="mt-1 text-xs text-acex-taupe">Movimentações mais recentes</p></div><span className="rounded-full bg-acex-teal/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-acex-teal">Agora</span></div>
+                      <div className="mt-4 space-y-2.5">
+                        {[['MA', 'Marina Alves', 'Bloco B · 204', 'Avisado'], ['RS', 'Rafael Souza', 'Torre 1 · 803', 'Pendente'], ['CL', 'Carla Lima', 'Bloco A · 102', 'Retirado']].map(([initials, name, unit, state], index) => (
+                          <div key={name} className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-black/10 p-3 transition hover:border-acex-teal/30 hover:bg-white/[0.04]"><div className="grid h-9 w-9 place-items-center rounded-lg bg-acex-teal/15 text-xs font-black text-acex-teal">{initials}</div><div className="min-w-0 flex-1"><p className="truncate text-sm font-black text-white">{name}</p><p className="text-xs text-acex-taupe">{unit}</p></div><span className={`text-[11px] font-bold ${index === 1 ? 'text-amber-400' : index === 2 ? 'text-acex-taupe' : 'text-acex-teal'}`}>{state}</span></div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="mt-4 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.15em] text-white/25"><span>Operação protegida</span><span>ACEX Partners</span></div>
                   </div>
                 </div>
               </div>
@@ -261,18 +278,19 @@ export function LandingPage() {
               <h2 className="mt-4 text-3xl font-black tracking-tight text-acex-navy sm:text-4xl">Um plano para cada tamanho de condomínio.</h2>
               <p className="mt-4 text-lg text-slate-600">Todos os planos incluem implantação assistida e 14 dias para experimentar.</p>
             </div>
-            <div className="acex-stagger mt-12 grid gap-5 lg:grid-cols-3">
+            <div className="acex-stagger mt-14 grid gap-6 lg:grid-cols-3 lg:items-stretch">
               {plans.map((plan) => (
-                <article key={plan.key} className={`acex-card-animate acex-interactive-card relative flex flex-col rounded-3xl border p-7 ${plan.featured ? 'border-acex-teal bg-acex-navy text-white shadow-2xl shadow-acex-navy/15' : 'border-slate-200 bg-white shadow-acex'}`}>
-                  {plan.featured && <span className="absolute right-6 top-0 -translate-y-1/2 rounded-full bg-acex-lime px-3 py-1 text-xs font-black uppercase tracking-wider text-acex-navy">Mais escolhido</span>}
-                  <p className={`text-sm font-black uppercase tracking-[0.14em] ${plan.featured ? 'text-acex-lime' : 'text-acex-teal'}`}>{plan.name}</p>
-                  <p className={`mt-2 text-sm font-bold ${plan.featured ? 'text-white/55' : 'text-slate-500'}`}>{plan.range}</p>
-                  <div className="mt-6 flex items-end gap-2"><span className="text-4xl font-black tracking-tight">R$ {plan.price}</span><span className={`pb-1 text-sm ${plan.featured ? 'text-white/50' : 'text-slate-400'}`}>/mês</span></div>
-                  <p className={`mt-5 min-h-14 leading-7 ${plan.featured ? 'text-white/60' : 'text-slate-500'}`}>{plan.description}</p>
-                  <ul className="mt-7 flex-1 space-y-3">
-                    {plan.features.map((feature) => <li key={feature} className="flex items-start gap-3 text-sm font-semibold"><Check className={`mt-0.5 h-4 w-4 shrink-0 ${plan.featured ? 'text-acex-lime' : 'text-acex-teal'}`} />{feature}</li>)}
+                <article key={plan.key} className={`acex-card-animate acex-interactive-card relative flex flex-col overflow-hidden rounded-[1.75rem] border p-7 sm:p-8 ${plan.featured ? 'border-acex-teal bg-acex-navy text-white shadow-[0_30px_70px_-35px_rgba(28,24,21,0.85)] lg:-translate-y-3' : 'border-[#ded4ca] bg-white shadow-acex'}`}>
+                  <div className={`absolute inset-x-0 top-0 h-1 ${plan.featured ? 'bg-acex-teal' : 'bg-gradient-to-r from-transparent via-acex-teal/35 to-transparent'}`} />
+                  {plan.featured && <span className="absolute right-5 top-5 rounded-full bg-acex-teal px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-acex-navy">Recomendado</span>}
+                  <div className="flex items-center gap-3"><span className={`h-2.5 w-2.5 rounded-full ${plan.featured ? 'bg-acex-teal' : 'bg-acex-teal/70'}`} /><p className={`text-sm font-black uppercase tracking-[0.16em] ${plan.featured ? 'text-acex-teal' : 'text-acex-ink'}`}>{plan.name}</p></div>
+                  <p className={`mt-3 text-sm font-semibold ${plan.featured ? 'text-white/50' : 'text-slate-500'}`}>{plan.range}</p>
+                  <div className="mt-7 border-y border-current/10 py-6"><div className="flex items-end gap-2"><span className="pb-1 text-lg font-black">R$</span><span className="text-5xl font-black tracking-[-0.05em]">{plan.price}</span><span className={`pb-1.5 text-sm ${plan.featured ? 'text-white/45' : 'text-slate-400'}`}>/mês</span></div><p className={`mt-2 text-xs font-bold uppercase tracking-wider ${plan.featured ? 'text-white/30' : 'text-slate-400'}`}>Cobrança mensal · 14 dias de teste</p></div>
+                  <p className={`mt-6 min-h-14 leading-7 ${plan.featured ? 'text-white/60' : 'text-slate-600'}`}>{plan.description}</p>
+                  <ul className="mt-7 flex-1 space-y-3.5">
+                    {plan.features.map((feature) => <li key={feature} className="flex items-start gap-3 text-sm font-semibold"><span className={`grid h-5 w-5 shrink-0 place-items-center rounded-full ${plan.featured ? 'bg-acex-teal/15 text-acex-teal' : 'bg-acex-mint text-acex-teal'}`}><Check className="h-3 w-3" /></span><span className="pt-0.5">{feature}</span></li>)}
                   </ul>
-                  <button onClick={() => scrollToLead(plan.key === 'essential' ? 150 : plan.key === 'professional' ? 350 : 600)} className={`mt-8 h-12 rounded-xl text-sm font-black ${plan.featured ? 'bg-acex-lime text-acex-navy hover:bg-white' : 'bg-acex-teal text-acex-navy hover:bg-acex-navy hover:text-white'}`}>Escolher {plan.name}</button>
+                  <button onClick={() => scrollToLead(plan.key === 'essential' ? 150 : plan.key === 'professional' ? 350 : 600)} className={`mt-9 h-14 rounded-xl px-5 text-sm font-black transition ${plan.featured ? 'bg-acex-teal text-acex-navy hover:bg-white' : 'border border-acex-navy bg-acex-navy text-white hover:border-acex-teal hover:bg-acex-teal hover:text-acex-navy'}`}>Escolher {plan.name}</button>
                 </article>
               ))}
             </div>
