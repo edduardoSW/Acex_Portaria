@@ -1,7 +1,7 @@
 # Deploy das Edge Functions (Supabase)
 
-O app tem **6 Edge Functions**. Sem elas deployadas, algumas telas param de funcionar (gestão de
-usuários, "esqueci minha senha" e notificação automática). Este guia cobre todas as 6.
+O app usa Edge Functions para gestão de usuários, redefinição de senha, notificações,
+confirmação de retirada e contatos comerciais da landing page.
 
 > **Pré-requisito:** você precisa de acesso ao projeto Supabase `jgoilgxilwempiirbsph` — ou como
 > **dono**, ou tendo sido **convidado como membro do projeto**. Sem esse acesso, o `supabase link`
@@ -9,7 +9,7 @@ usuários, "esqueci minha senha" e notificação automática). Este guia cobre t
 
 ---
 
-## As 6 functions e o que cada uma faz
+## Functions e o que cada uma faz
 
 | Function | Powers (o que quebra sem ela) | Valida JWT no código | Trata CORS |
 |----------|-------------------------------|:---:|:---:|
@@ -19,6 +19,8 @@ usuários, "esqueci minha senha" e notificação automática). Este guia cobre t
 | `request-password-reset` | Tela **"Esqueci minha senha"** (registra o pedido) | pública¹ | ✅ |
 | `resolve-password-request` | Admin resolve o pedido de reset | ✅ | ✅ |
 | `send-package-notification` | Notificação de encomenda via **Evolution API** (modo `evolution`) | ✅ | ⚠️ **não** |
+| `package-pickup` | Confirmação de retirada por código e e-mail | ✅ | ✅ |
+| `send-sales-lead` | Envia os contatos comerciais da landing page | pública | ✅ |
 
 ¹ `request-password-reset` é **pública por design** (o usuário deslogado precisa chamá-la), então
 não valida JWT — e deve continuar assim.
@@ -47,7 +49,7 @@ supabase link --project-ref jgoilgxilwempiirbsph
 > `https://supabase.com/dashboard/project/<PROJECT_REF>`). O `supabase init` **não** é necessário —
 > o repositório já tem a pasta `supabase/`.
 
-## Passo 3 — Deploy das 6 functions
+## Passo 3 — Deploy das functions
 
 ```bash
 supabase functions deploy create-user --no-verify-jwt
@@ -57,7 +59,23 @@ supabase functions deploy request-password-reset --no-verify-jwt
 supabase functions deploy resolve-password-request --no-verify-jwt
 supabase functions deploy send-package-notification --no-verify-jwt
 supabase functions deploy package-pickup --no-verify-jwt
+supabase functions deploy send-sales-lead --no-verify-jwt
 ```
+
+## Formulário comercial da landing page
+
+A function pública `send-sales-lead` calcula novamente o plano no servidor e envia o contato
+comercial pelo Resend. Configure os secrets abaixo antes do deploy:
+
+```bash
+supabase secrets set RESEND_API_KEY=re_sua_chave
+supabase secrets set EMAIL_FROM="ACEX Portaria <contato@seu-dominio.com>"
+supabase secrets set SALES_EMAIL="comercial@seu-dominio.com"
+supabase functions deploy send-sales-lead --no-verify-jwt
+```
+
+`SALES_EMAIL` é o endereço interno que recebe os novos contatos. O formulário nunca escolhe o
+destinatário e nenhuma chave privada é exposta no front-end.
 
 ## Confirmação de retirada por e-mail
 

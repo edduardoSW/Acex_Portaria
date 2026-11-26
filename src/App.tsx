@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 // Cada página é carregada sob demanda (code-splitting por rota): o bundle
 // inicial fica pequeno e cada perfil baixa só as telas que realmente usa.
 const Login = lazy(() => import('./pages/Login').then((m) => ({ default: m.Login })));
+const LandingPage = lazy(() => import('./pages/LandingPage').then((m) => ({ default: m.LandingPage })));
 const DoormanHome = lazy(() => import('./pages/DoormanHome').then((m) => ({ default: m.DoormanHome })));
 const NewPackage = lazy(() => import('./pages/NewPackage').then((m) => ({ default: m.NewPackage })));
 const PendingPackages = lazy(() => import('./pages/PendingPackages').then((m) => ({ default: m.PendingPackages })));
@@ -200,8 +201,10 @@ function AppRoutes() {
 
   return (
     <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/planos" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
