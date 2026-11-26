@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CheckCircle2, Clock3, History, LogOut, Package, Plus, UserRound } from 'lucide-react';
-import { AcexLogo } from '../components/AcexLogo';
+import { AcexCredit, AcexLogo } from '../components/AcexLogo';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 
@@ -63,13 +63,13 @@ export function DoormanHome() {
           </div>
         </section>
 
-        <section className="mt-6 grid gap-4 sm:grid-cols-3">
+        <section className="acex-stagger mt-6 grid gap-4 sm:grid-cols-3">
           {[
             { label: 'Recebidas hoje', value: stats.today, icon: Package, color: 'bg-sky-50 text-sky-600' },
             { label: 'Aguardando retirada', value: stats.pending, icon: Clock3, color: 'bg-amber-50 text-amber-600' },
             { label: 'Entregues hoje', value: stats.delivered, icon: CheckCircle2, color: 'bg-emerald-50 text-emerald-600' },
           ].map(({ label, value, icon: Icon, color }) => (
-            <div key={label} className="acex-surface flex items-center gap-4 p-5"><div className={`grid h-12 w-12 place-items-center rounded-xl ${color}`}><Icon className="h-6 w-6" /></div><div><p className="text-sm font-semibold text-slate-500">{label}</p><p className="mt-1 text-3xl font-black text-acex-ink">{value}</p></div></div>
+            <div key={label} className="acex-surface acex-interactive-card group flex items-center gap-4 p-5"><div className={`acex-icon-tile grid h-12 w-12 place-items-center rounded-xl ${color}`}><Icon className="h-6 w-6" /></div><div><p className="text-sm font-semibold text-slate-500">{label}</p><p className="mt-1 text-3xl font-black text-acex-ink">{value}</p></div></div>
           ))}
         </section>
 
@@ -81,11 +81,12 @@ export function DoormanHome() {
 
           <section className="space-y-4">
             <h2 className="text-lg font-black text-acex-ink">Ações rápidas</h2>
-            <Link to="/nova-encomenda" className="acex-surface flex items-center gap-4 p-5 transition hover:border-acex-teal"><div className="grid h-12 w-12 place-items-center rounded-xl bg-acex-teal text-white"><Plus className="h-6 w-6" /></div><div><p className="font-black text-acex-ink">Nova encomenda</p><p className="text-sm text-slate-500">Registrar uma chegada</p></div></Link>
-            <Link to="/pendentes" className="acex-surface flex items-center gap-4 p-5 transition hover:border-acex-teal"><div className="grid h-12 w-12 place-items-center rounded-xl bg-amber-50 text-amber-600"><Clock3 className="h-6 w-6" /></div><div><p className="font-black text-acex-ink">Pendentes</p><p className="text-sm text-slate-500">Dar baixa em uma retirada</p></div></Link>
-            <Link to="/historico" className="acex-surface flex items-center gap-4 p-5 transition hover:border-acex-teal"><div className="grid h-12 w-12 place-items-center rounded-xl bg-slate-100 text-slate-600"><History className="h-6 w-6" /></div><div><p className="font-black text-acex-ink">Histórico</p><p className="text-sm text-slate-500">Consultar movimentações</p></div></Link>
+            <Link to="/nova-encomenda" className="acex-surface acex-interactive-card group flex items-center gap-4 p-5"><div className="acex-icon-tile grid h-12 w-12 place-items-center rounded-xl bg-acex-teal text-white"><Plus className="h-6 w-6" /></div><div><p className="font-black text-acex-ink">Nova encomenda</p><p className="text-sm text-slate-500">Registrar uma chegada</p></div></Link>
+            <Link to="/pendentes" className="acex-surface acex-interactive-card group flex items-center gap-4 p-5"><div className="acex-icon-tile grid h-12 w-12 place-items-center rounded-xl bg-amber-50 text-amber-600"><Clock3 className="h-6 w-6" /></div><div><p className="font-black text-acex-ink">Pendentes</p><p className="text-sm text-slate-500">Dar baixa em uma retirada</p></div></Link>
+            <Link to="/historico" className="acex-surface acex-interactive-card group flex items-center gap-4 p-5"><div className="acex-icon-tile grid h-12 w-12 place-items-center rounded-xl bg-slate-100 text-slate-600"><History className="h-6 w-6" /></div><div><p className="font-black text-acex-ink">Histórico</p><p className="text-sm text-slate-500">Consultar movimentações</p></div></Link>
           </section>
         </div>
+        <footer className="mt-10 border-t border-slate-200 pt-6 text-center"><AcexCredit /></footer>
       </main>
     </div>
   );

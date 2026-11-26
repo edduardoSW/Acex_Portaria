@@ -16,7 +16,7 @@ import {
   UsersRound,
   X,
 } from 'lucide-react';
-import { AcexLogo } from '../components/AcexLogo';
+import { AcexCredit, AcexLogo } from '../components/AcexLogo';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 
@@ -119,13 +119,13 @@ function MetricCard({
   accent: string;
 }) {
   return (
-    <div className="acex-surface min-w-0 p-5">
+    <div className="acex-surface acex-interactive-card group min-w-0 p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm font-medium text-slate-500">{label}</p>
           <p className="mt-2 truncate text-3xl font-black tracking-tight text-acex-ink">{value}</p>
         </div>
-        <div className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${accent}`}>{icon}</div>
+        <div className={`acex-icon-tile grid h-11 w-11 shrink-0 place-items-center rounded-xl ${accent}`}>{icon}</div>
       </div>
       <p className="mt-4 text-xs font-semibold text-slate-400">{helper}</p>
     </div>
@@ -295,6 +295,7 @@ export function GeneralManagerDashboard() {
         </nav>
 
         <div className="mt-auto space-y-1 border-t border-white/10 pt-5">
+          <div className="px-3 pb-3"><AcexCredit inverse /></div>
           <button type="button" onClick={() => window.alert('Para suporte, envie um e-mail para a equipe ACEX responsável pela sua conta.')} className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-white/65 hover:bg-white/10 hover:text-white">
             <CircleHelp className="h-5 w-5" /> Central de ajuda
           </button>
@@ -339,7 +340,7 @@ export function GeneralManagerDashboard() {
             </div>
           </section>}
 
-          {activeView !== 'team' && <section className={`${activeView === 'overview' ? 'mt-6' : ''} grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4`} aria-label="Indicadores">
+          {activeView !== 'team' && <section className={`${activeView === 'overview' ? 'mt-6' : ''} acex-stagger grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4`} aria-label="Indicadores">
             <MetricCard label="Condomínios" value={String(condominiums.length)} helper="Total na carteira" icon={<Building2 className="h-5 w-5" />} accent="bg-acex-mint text-acex-teal" />
             <MetricCard label="Assinaturas ativas" value={String(metrics.active)} helper={`${metrics.trial} em período de teste`} icon={<CheckCircle2 className="h-5 w-5" />} accent="bg-emerald-50 text-emerald-600" />
             <MetricCard label="Receita mensal" value={currency.format(metrics.mrr)} helper="Receita recorrente estimada" icon={<CreditCard className="h-5 w-5" />} accent="bg-sky-50 text-sky-600" />

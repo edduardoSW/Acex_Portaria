@@ -12,7 +12,7 @@ import {
   UserCog,
   UsersRound,
 } from 'lucide-react';
-import { AcexLogo } from '../components/AcexLogo';
+import { AcexCredit, AcexLogo } from '../components/AcexLogo';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -130,14 +130,14 @@ export function AdminDashboard() {
           <div className="flex gap-3"><Link to="/admin/encomendas" className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-acex-navy hover:border-acex-teal">Ver encomendas</Link><Link to="/admin/configuracoes" className="grid h-11 w-11 place-items-center rounded-xl bg-acex-navy text-white hover:bg-acex-teal" aria-label="Configurações"><Settings className="h-5 w-5" /></Link></div>
         </section>
 
-        <section className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="acex-stagger mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
             { label: 'Recebidas hoje', value: stats.today, helper: `${stats.deliveredToday} entregues hoje`, icon: Package, accent: 'bg-sky-50 text-sky-600', to: '/admin/encomendas?filter=today' },
             { label: 'Aguardando retirada', value: stats.pending, helper: 'Encomendas na portaria', icon: Clock3, accent: 'bg-amber-50 text-amber-600', to: '/admin/encomendas?filter=pending' },
             { label: 'Moradores', value: stats.residents, helper: 'Cadastros no condomínio', icon: UsersRound, accent: 'bg-acex-mint text-acex-teal', to: '/admin/moradores' },
             { label: 'Equipe ativa', value: stats.activeUsers, helper: 'Síndicos e porteiros', icon: UserCog, accent: 'bg-violet-50 text-violet-600', to: '/admin/usuarios' },
           ].map(({ label, value, helper, icon: Icon, accent, to }) => (
-            <Link key={label} to={to} className="acex-surface p-5 transition hover:-translate-y-0.5 hover:border-acex-teal"><div className="flex items-start justify-between"><div><p className="text-sm font-semibold text-slate-500">{label}</p><p className="mt-2 text-3xl font-black text-acex-ink">{loading ? '—' : value}</p></div><div className={`grid h-11 w-11 place-items-center rounded-xl ${accent}`}><Icon className="h-5 w-5" /></div></div><p className="mt-4 text-xs font-semibold text-slate-400">{helper}</p></Link>
+            <Link key={label} to={to} className="acex-surface acex-interactive-card group p-5"><div className="flex items-start justify-between"><div><p className="text-sm font-semibold text-slate-500">{label}</p><p className="mt-2 text-3xl font-black text-acex-ink">{loading ? '—' : value}</p></div><div className={`acex-icon-tile grid h-11 w-11 place-items-center rounded-xl ${accent}`}><Icon className="h-5 w-5" /></div></div><p className="mt-4 text-xs font-semibold text-slate-400">{helper}</p></Link>
           ))}
         </section>
 
@@ -158,6 +158,7 @@ export function AdminDashboard() {
             </div></section>
           </div>
         </div>
+        <footer className="mt-10 border-t border-slate-200 pt-6 text-center"><AcexCredit /></footer>
       </main>
     </div>
   );

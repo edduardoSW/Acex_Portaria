@@ -14,7 +14,7 @@ import {
   Sparkles,
   X,
 } from 'lucide-react';
-import { AcexLogo } from '../components/AcexLogo';
+import { AcexCredit, AcexLogo } from '../components/AcexLogo';
 import { supabase } from '../lib/supabase';
 
 type PlanKey = 'essential' | 'professional' | 'enterprise' | 'custom';
@@ -211,15 +211,15 @@ export function LandingPage() {
               <h2 className="mt-4 text-3xl font-black tracking-tight text-acex-navy sm:text-4xl">Da chegada à retirada, tudo registrado.</h2>
               <p className="mt-4 text-lg leading-8 text-slate-600">Menos papel, menos recados perdidos e mais clareza para quem trabalha e para quem mora.</p>
             </div>
-            <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+            <div className="acex-stagger mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
               {[
                 { icon: PackageCheck, title: 'Registro rápido', text: 'A portaria registra a encomenda e identifica o morador em poucos passos.' },
                 { icon: BellRing, title: 'Aviso ao morador', text: 'O sistema organiza o envio das notificações e o acompanhamento.' },
                 { icon: KeyRound, title: 'Retirada segura', text: 'Códigos ajudam a validar a entrega e manter o histórico correto.' },
                 { icon: ShieldCheck, title: 'Gestão centralizada', text: 'Administradores acompanham a operação e os acessos do condomínio.' },
               ].map(({ icon: Icon, title, text }) => (
-                <article key={title} className="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-acex">
-                  <div className="grid h-12 w-12 place-items-center rounded-2xl bg-acex-mint text-acex-teal"><Icon className="h-6 w-6" /></div>
+                <article key={title} className="acex-card-animate acex-interactive-card group rounded-3xl border border-slate-200/70 bg-white p-6 shadow-acex">
+                  <div className="acex-icon-tile grid h-12 w-12 place-items-center rounded-2xl bg-acex-mint text-acex-teal"><Icon className="h-6 w-6" /></div>
                   <h3 className="mt-5 text-lg font-black text-acex-navy">{title}</h3>
                   <p className="mt-3 leading-7 text-slate-500">{text}</p>
                 </article>
@@ -258,9 +258,9 @@ export function LandingPage() {
               <h2 className="mt-4 text-3xl font-black tracking-tight text-acex-navy sm:text-4xl">Um plano para cada tamanho de condomínio.</h2>
               <p className="mt-4 text-lg text-slate-600">Todos os planos incluem implantação assistida e 14 dias para experimentar.</p>
             </div>
-            <div className="mt-12 grid gap-5 lg:grid-cols-3">
+            <div className="acex-stagger mt-12 grid gap-5 lg:grid-cols-3">
               {plans.map((plan) => (
-                <article key={plan.key} className={`relative flex flex-col rounded-3xl border p-7 ${plan.featured ? 'border-acex-teal bg-acex-navy text-white shadow-2xl shadow-acex-navy/15' : 'border-slate-200 bg-white shadow-acex'}`}>
+                <article key={plan.key} className={`acex-card-animate acex-interactive-card relative flex flex-col rounded-3xl border p-7 ${plan.featured ? 'border-acex-teal bg-acex-navy text-white shadow-2xl shadow-acex-navy/15' : 'border-slate-200 bg-white shadow-acex'}`}>
                   {plan.featured && <span className="absolute right-6 top-0 -translate-y-1/2 rounded-full bg-acex-lime px-3 py-1 text-xs font-black uppercase tracking-wider text-acex-navy">Mais escolhido</span>}
                   <p className={`text-sm font-black uppercase tracking-[0.14em] ${plan.featured ? 'text-acex-lime' : 'text-acex-teal'}`}>{plan.name}</p>
                   <p className={`mt-2 text-sm font-bold ${plan.featured ? 'text-white/55' : 'text-slate-500'}`}>{plan.range}</p>
@@ -339,7 +339,7 @@ export function LandingPage() {
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 px-5 sm:px-8 md:flex-row md:items-center">
           <AcexLogo inverse />
           <div className="flex flex-wrap gap-6 text-sm font-semibold text-white/55"><a href="#solucao" className="hover:text-white">Solução</a><a href="#planos" className="hover:text-white">Planos</a><a href="#duvidas" className="hover:text-white">Dúvidas</a><Link to="/login" className="hover:text-white">Acessar sistema</Link></div>
-          <p className="text-sm text-white/40">© {new Date().getFullYear()} ACEX Portaria</p>
+          <div className="text-center md:text-right"><AcexCredit inverse /><p className="mt-2 text-sm text-white/40">© {new Date().getFullYear()} ACEX Portaria</p></div>
         </div>
       </footer>
     </div>

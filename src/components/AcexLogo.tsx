@@ -19,10 +19,24 @@ export function AcexLogo({ compact = false, inverse = false }: AcexLogoProps) {
             ACEX
           </div>
           <div className={`mt-1 text-[10px] font-bold uppercase tracking-[0.24em] ${inverse ? 'text-white/55' : 'text-slate-400'}`}>
-            Portaria inteligente
+            Portaria · by ACEX
           </div>
         </div>
       )}
     </div>
+  );
+}
+
+export function AcexCredit({ inverse = false }: { inverse?: boolean }) {
+  return (
+    <a
+      href="https://www.acexpartners.com.br/"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`inline-flex items-center gap-2 text-xs font-bold transition ${inverse ? 'text-white/45 hover:text-acex-lime' : 'text-slate-400 hover:text-acex-teal'}`}
+    >
+      <span>by ACEX Partners</span>
+      <span className="font-medium">acexpartners.com.br</span>
+    </a>
   );
 }
