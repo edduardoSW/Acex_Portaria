@@ -169,9 +169,9 @@ export function LandingPage() {
       </header>
 
       <main>
-        <section id="inicio" className="relative overflow-hidden bg-acex-navy pb-20 pt-32 text-white sm:pt-40 lg:pb-28">
-          <div className="absolute right-0 top-20 h-[560px] w-[35%] bg-acex-teal/[0.05]" />
-          <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 sm:px-8 lg:grid-cols-[1.05fr_.95fr]">
+        <section id="inicio" className="relative flex min-h-[100svh] items-center overflow-hidden bg-acex-navy pb-12 pt-28 text-white sm:pb-14 sm:pt-32 lg:pb-6 lg:pt-24">
+          <div className="absolute bottom-0 right-0 top-20 w-[35%] bg-acex-teal/[0.05]" />
+          <div className="relative mx-auto grid w-full max-w-[1440px] items-center gap-10 px-5 sm:px-8 lg:grid-cols-[1.02fr_.98fr] xl:gap-14">
             <div>
               <h1 className="max-w-3xl text-4xl font-black leading-[1.04] tracking-[-0.045em] text-acex-cream sm:text-5xl lg:text-6xl">
                 Encomendas sob controle. <span className="text-acex-teal">Portaria sem ruído.</span>
@@ -185,7 +185,7 @@ export function LandingPage() {
               </div>
             </div>
 
-            <div className="relative lg:pl-4">
+            <div className="relative lg:pl-2 xl:pl-4">
               <div className="absolute -inset-8 rounded-full bg-acex-teal/15 blur-3xl" />
               <div className="relative rounded-[2rem] border border-white/10 bg-[#0f0d0c] p-2 shadow-[0_35px_90px_-35px_rgba(0,0,0,0.9)]">
                 <div className="overflow-hidden rounded-[1.55rem] border border-white/10 bg-[#171310]">
@@ -193,32 +193,32 @@ export function LandingPage() {
                     <div className="flex gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-acex-teal" /><span className="h-2.5 w-2.5 rounded-full bg-[#564b43]" /><span className="h-2.5 w-2.5 rounded-full bg-[#564b43]" /></div>
                     <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/25">Painel operacional</span>
                   </div>
-                  <div className="p-4 sm:p-5">
+                  <div className="p-4">
                     <div className="flex items-center justify-between">
                       <div><p className="font-black tracking-[0.08em] text-white">ACEX <span className="text-acex-teal">PORTARIA</span></p><p className="mt-1 text-xs text-acex-taupe">Visão geral · atualização em tempo real</p></div>
                       <span className="flex items-center gap-2 rounded-full border border-emerald-400/15 bg-emerald-400/10 px-3 py-1.5 text-xs font-bold text-emerald-400"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />Online</span>
                     </div>
-                    <div className="mt-5 grid grid-cols-3 gap-2.5 sm:gap-3">
+                    <div className="mt-4 grid grid-cols-3 gap-2.5">
                       {[
                         { label: 'Recebidas', value: '18', icon: PackageCheck },
                         { label: 'Pendentes', value: '7', icon: Clock3 },
                         { label: 'Entregues', value: '11', icon: CheckCircle2 },
                       ].map(({ label, value, icon: Icon }, index) => (
-                        <div key={label} className={`rounded-2xl border p-3 sm:p-4 ${index === 1 ? 'border-acex-teal/40 bg-acex-teal text-acex-navy' : 'border-white/[0.07] bg-white/[0.035] text-white'}`}>
+                        <div key={label} className={`rounded-2xl border p-3 ${index === 1 ? 'border-acex-teal/40 bg-acex-teal text-acex-navy' : 'border-white/[0.07] bg-white/[0.035] text-white'}`}>
                           <div className="flex items-center justify-between"><p className={`text-[10px] font-black uppercase tracking-wider ${index === 1 ? 'text-acex-navy/60' : 'text-acex-taupe'}`}>{label}</p><Icon className="hidden h-4 w-4 opacity-50 sm:block" /></div>
-                          <p className="mt-3 text-2xl font-black sm:text-3xl">{value}</p>
+                          <p className="mt-2 text-2xl font-black">{value}</p>
                         </div>
                       ))}
                     </div>
-                    <div className="mt-4 rounded-2xl border border-white/[0.07] bg-white/[0.035] p-4 sm:p-5">
+                    <div className="mt-3 rounded-2xl border border-white/[0.07] bg-white/[0.035] p-4">
                       <div className="flex items-center justify-between"><div><p className="font-black text-white">Últimas encomendas</p><p className="mt-1 text-xs text-acex-taupe">Movimentações mais recentes</p></div><span className="rounded-full bg-acex-teal/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-acex-teal">Agora</span></div>
-                      <div className="mt-4 space-y-2.5">
+                      <div className="mt-3 space-y-2">
                         {[['MA', 'Marina Alves', 'Bloco B · 204', 'Avisado'], ['RS', 'Rafael Souza', 'Torre 1 · 803', 'Pendente'], ['CL', 'Carla Lima', 'Bloco A · 102', 'Retirado']].map(([initials, name, unit, state], index) => (
-                          <div key={name} className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-black/10 p-3 transition hover:border-acex-teal/30 hover:bg-white/[0.04]"><div className="grid h-9 w-9 place-items-center rounded-lg bg-acex-teal/15 text-xs font-black text-acex-teal">{initials}</div><div className="min-w-0 flex-1"><p className="truncate text-sm font-black text-white">{name}</p><p className="text-xs text-acex-taupe">{unit}</p></div><span className={`text-[11px] font-bold ${index === 1 ? 'text-amber-400' : index === 2 ? 'text-acex-taupe' : 'text-acex-teal'}`}>{state}</span></div>
+                          <div key={name} className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-black/10 p-2.5 transition hover:border-acex-teal/30 hover:bg-white/[0.04]"><div className="grid h-8 w-8 place-items-center rounded-lg bg-acex-teal/15 text-xs font-black text-acex-teal">{initials}</div><div className="min-w-0 flex-1"><p className="truncate text-sm font-black text-white">{name}</p><p className="text-xs text-acex-taupe">{unit}</p></div><span className={`text-[11px] font-bold ${index === 1 ? 'text-amber-400' : index === 2 ? 'text-acex-taupe' : 'text-acex-teal'}`}>{state}</span></div>
                         ))}
                       </div>
                     </div>
-                    <div className="mt-4 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.15em] text-white/25"><span>Operação protegida</span><span>ACEX Partners</span></div>
+                    <div className="mt-3 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.15em] text-white/25"><span>Operação protegida</span><span>ACEX Partners</span></div>
                   </div>
                 </div>
               </div>
