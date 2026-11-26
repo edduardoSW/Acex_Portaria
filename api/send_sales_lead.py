@@ -7,14 +7,14 @@ from http.server import BaseHTTPRequestHandler
 from typing import Optional, Tuple
 
 
-def calculate_plan(units: int) -> Tuple[str, Optional[int]]:
+def calculate_plan(units: int) -> Tuple[str, Optional[int], Optional[int]]:
     if units <= 150:
-        return "Essencial", 199
+        return "Essencial", 199, 1
     if units <= 350:
-        return "Profissional", 349
+        return "Profissional", 349, 2
     if units <= 600:
-        return "Enterprise", 599
-    return "Personalizado", None
+        return "Enterprise", 599, 3
+    return "Personalizado", None, None
 
 
 class handler(BaseHTTPRequestHandler):
@@ -68,8 +68,9 @@ class handler(BaseHTTPRequestHandler):
                 self._send_json(503, {"error": "Canal de vendas ainda não configurado."})
                 return
 
-            plan_name, plan_price = calculate_plan(units)
+            plan_name, plan_price, confirmation_users = calculate_plan(units)
             price_text = f"R$ {plan_price}/mês" if plan_price else "Proposta personalizada"
+            confirmation_text = f"{confirmation_users} usuário{'s' if confirmation_users != 1 else ''}" if confirmation_users else "Sob consulta"
             safe_message = html.escape(message).replace("\n", "<br>")
             message_block = (
                 f'<div style="margin-top:22px;padding:18px;background:#f4efe8;border-radius:12px">'
@@ -89,6 +90,7 @@ class handler(BaseHTTPRequestHandler):
                 <p><strong>Telefone:</strong> {html.escape(phone)}</p>
                 <p><strong>Unidades:</strong> {units}</p>
                 <p><strong>Plano calculado:</strong> {plan_name} · {price_text}</p>
+                <p><strong>Usuários que recebem o código por e-mail:</strong> {confirmation_text}</p>
                 <p><strong>Teste gratuito de 15 dias:</strong> {"Solicitado" if trial_requested else "Não solicitado"}</p>
                 {message_block}
               </div>

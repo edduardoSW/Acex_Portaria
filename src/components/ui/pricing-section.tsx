@@ -1,4 +1,4 @@
-import { Check } from 'lucide-react';
+import { Check, MailCheck } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export type PricingPlan = {
@@ -7,6 +7,7 @@ export type PricingPlan = {
   range: string;
   price: number | null;
   description: string;
+  confirmationUsers: number | null;
   features: string[];
   featured?: boolean;
 };
@@ -19,8 +20,8 @@ type PricingSectionProps = {
 
 export function PricingSection({ plans, onSelect, onCustom }: PricingSectionProps) {
   return (
-    <section id="planos" className="theme-section relative w-full bg-black py-20 font-sans text-white selection:bg-white selection:text-black sm:py-28">
-      <div className="mx-auto max-w-6xl px-5 sm:px-8">
+    <section id="planos" className="pricing-section theme-section relative w-full overflow-hidden bg-black py-20 font-sans text-white selection:bg-white selection:text-black sm:py-28">
+      <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
         <div className="mb-12 flex flex-col items-center text-center sm:mb-16">
           <p className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-acex-teal">Planos transparentes</p>
           <h2 className="max-w-3xl text-balance text-4xl font-medium tracking-[-0.04em] text-white sm:text-5xl md:text-6xl">
@@ -35,13 +36,21 @@ export function PricingSection({ plans, onSelect, onCustom }: PricingSectionProp
           </div>
         </div>
 
-        <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="pricing-email-banner mb-10 grid gap-5 rounded-xl border border-acex-teal/25 bg-acex-teal/[0.08] p-5 sm:grid-cols-[auto_1fr] sm:items-center sm:p-6">
+          <div className="grid h-12 w-12 place-items-center rounded-lg bg-acex-teal text-black"><MailCheck className="h-6 w-6" /></div>
+          <div>
+            <h3 className="text-lg font-medium text-white">Confirmação de retirada por e-mail</h3>
+            <p className="mt-1 text-sm leading-6 text-neutral-400">Cada condomínio define usuários autorizados para receber o código de confirmação. O limite incluído aumenta conforme o plano.</p>
+          </div>
+        </div>
+
+        <div className="grid w-full grid-cols-1 gap-5 lg:grid-cols-3 lg:items-stretch">
           {plans.map((plan) => (
             <article
               key={plan.key}
               className={cn(
-                'theme-panel relative flex flex-col overflow-hidden rounded-xl border bg-[#050505] p-7 transition-colors sm:p-8',
-                plan.featured ? 'border-white/[0.25] shadow-2xl' : 'border-white/[0.08] hover:border-white/[0.15]',
+                'pricing-card theme-panel relative flex flex-col overflow-hidden rounded-xl border bg-[#050505] p-7 transition-all duration-300 sm:p-8',
+                plan.featured ? 'pricing-card-featured border-acex-teal/60 shadow-2xl lg:-translate-y-3 lg:scale-[1.02]' : 'border-white/[0.08] hover:-translate-y-1 hover:border-white/[0.18]',
               )}
             >
               {plan.featured && <div className="pricing-highlight absolute inset-x-0 top-0 h-px bg-white" />}
@@ -57,10 +66,20 @@ export function PricingSection({ plans, onSelect, onCustom }: PricingSectionProp
                 )}
               </div>
 
+              <div className={cn('pricing-email-limit mb-6 rounded-lg border p-4', plan.featured ? 'border-acex-teal/25 bg-acex-teal/[0.08]' : 'border-white/[0.08] bg-white/[0.025]')}>
+                <div className="flex items-start gap-3">
+                  <MailCheck className={cn('mt-0.5 h-5 w-5 shrink-0', plan.featured ? 'text-acex-teal' : 'text-neutral-500')} />
+                  <div>
+                    <p className="text-sm font-medium text-white">{plan.confirmationUsers} {plan.confirmationUsers === 1 ? 'usuário autorizado' : 'usuários autorizados'}</p>
+                    <p className="mt-1 text-xs leading-5 text-neutral-500">{plan.confirmationUsers === 1 ? 'Recebe' : 'Recebem'} por e-mail o código para confirmar a retirada.</p>
+                  </div>
+                </div>
+              </div>
+
               <p className="mb-3 font-mono text-xs uppercase tracking-widest text-neutral-500">{plan.range}</p>
               <div className="mb-7 flex items-baseline gap-1">
                 <span className="text-lg font-medium text-neutral-300">R$</span>
-                <span className="text-4xl font-medium tracking-[-0.05em]">{plan.price}</span>
+                <span className="text-5xl font-medium tracking-[-0.06em]">{plan.price}</span>
                 <span className="text-sm font-medium text-neutral-500">/ mês</span>
               </div>
 

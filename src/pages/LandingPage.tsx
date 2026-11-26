@@ -25,6 +25,7 @@ type Plan = {
   range: string;
   price: number | null;
   description: string;
+  confirmationUsers: number | null;
   features: string[];
   featured?: boolean;
 };
@@ -36,6 +37,7 @@ const plans: Plan[] = [
     range: 'Até 150 unidades',
     price: 199,
     description: 'Para condomínios que querem organizar a portaria sem complicação.',
+    confirmationUsers: 1,
     features: ['Cadastro de moradores', 'Controle de encomendas', 'Avisos aos moradores', 'Histórico de retiradas'],
   },
   {
@@ -44,6 +46,7 @@ const plans: Plan[] = [
     range: 'De 151 a 350 unidades',
     price: 349,
     description: 'Mais capacidade para operações com maior volume e mais usuários.',
+    confirmationUsers: 2,
     features: ['Tudo do Essencial', 'Múltiplos porteiros', 'Códigos de retirada', 'Painel administrativo completo'],
     featured: true,
   },
@@ -53,6 +56,7 @@ const plans: Plan[] = [
     range: 'De 351 a 600 unidades',
     price: 599,
     description: 'Estrutura completa para grandes condomínios e operações intensas.',
+    confirmationUsers: 3,
     features: ['Tudo do Profissional', 'Maior volume operacional', 'Gestão avançada de acessos', 'Atendimento prioritário'],
   },
 ];
@@ -73,6 +77,7 @@ function calculatePlan(units: number): Plan {
     range: 'Acima de 600 unidades',
     price: null,
     description: 'Uma proposta desenhada para a estrutura e o volume da sua operação.',
+    confirmationUsers: null,
     features: ['Escala personalizada', 'Implantação assistida', 'Condições comerciais sob medida'],
   };
 }
