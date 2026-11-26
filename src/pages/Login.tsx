@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { LogIn, Eye, EyeOff } from 'lucide-react';
+import { Building2, Eye, EyeOff, PackageCheck, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_MIN_LENGTH_MESSAGE,
 } from '../utils/passwordValidation';
+import { AcexLogo } from '../components/AcexLogo';
 
 const loginSchema = z.object({
   email: z.string().email('E-mail inválido'),
@@ -76,7 +77,9 @@ export function Login() {
       console.log('Perfil:', profile);
       console.log('Role:', profile?.role);
 
-      if (profile.role === 'admin') {
+      if (profile.role === 'general_manager') {
+        navigate('/geral', { replace: true });
+      } else if (profile.role === 'admin') {
         navigate('/admin', { replace: true });
       } else if (profile.role === 'doorman') {
         navigate('/porteiro', { replace: true });
@@ -145,16 +148,31 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <div className="flex justify-center">
-            <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center">
-              <LogIn className="w-8 h-8 text-white" />
+    <div className="min-h-screen bg-white lg:grid lg:grid-cols-[35%_65%]">
+      <section className="relative hidden overflow-hidden bg-acex-navy p-10 text-white lg:flex lg:flex-col lg:justify-between xl:p-14">
+        <div className="absolute -left-28 top-1/3 h-80 w-80 rounded-full border-[56px] border-white/[0.035]" />
+        <AcexLogo inverse />
+        <div className="relative max-w-md">
+          <span className="inline-flex rounded-full bg-acex-lime px-3 py-1 text-xs font-black uppercase tracking-[0.14em] text-acex-navy">Gestão inteligente</span>
+          <h1 className="mt-6 text-4xl font-black leading-tight tracking-tight xl:text-5xl">A portaria do seu condomínio, mais simples.</h1>
+          <p className="mt-5 text-base leading-7 text-white/60">Controle de encomendas, moradores e equipe com uma operação clara, segura e conectada.</p>
+        </div>
+        <div className="relative grid grid-cols-3 gap-3">
+          {[{ icon: PackageCheck, label: 'Encomendas' }, { icon: Building2, label: 'Condomínios' }, { icon: ShieldCheck, label: 'Segurança' }].map(({ icon: Icon, label }) => (
+            <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.055] p-4">
+              <Icon className="h-5 w-5 text-acex-lime" />
+              <p className="mt-3 text-xs font-bold text-white/70">{label}</p>
             </div>
-          </div>
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">Acex Portaria</h2>
-          <p className="mt-2 text-gray-600">
+          ))}
+        </div>
+      </section>
+      <section className="flex min-h-screen items-center justify-center px-5 py-10 sm:px-10">
+      <div className="w-full max-w-md space-y-8">
+        <div className="text-center">
+          <div className="flex justify-center lg:hidden"><AcexLogo /></div>
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-acex-teal">Bem-vindo de volta</p>
+          <h2 className="mt-3 text-3xl font-black tracking-tight text-acex-ink">Acesse sua conta</h2>
+          <p className="mt-2 text-slate-500">
             {forgotPassword ? 'Solicitar redefinição de senha' : 'Entre com sua conta'}
           </p>
         </div>
@@ -173,7 +191,7 @@ export function Login() {
                 <button
                   type="button"
                   onClick={() => setForgotPassword(false)}
-                  className="mt-3 text-blue-600 hover:underline"
+                  className="mt-3 font-bold text-acex-teal hover:underline"
                 >
                   Voltar para login
                 </button>
@@ -191,7 +209,7 @@ export function Login() {
                       value={forgotEmail}
                       onChange={(e) => setForgotEmail(e.target.value)}
                       placeholder="E-mail"
-                      className="appearance-none relative block w-full px-4 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-lg"
+                      className="acex-input h-14 text-base"
                     />
                   </div>
                 </div>
@@ -200,7 +218,7 @@ export function Login() {
                   <button
                     type="submit"
                     disabled={forgotLoading}
-                    className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-lg font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="group relative flex h-14 w-full justify-center rounded-xl bg-acex-teal px-4 py-4 text-base font-bold text-white transition-colors hover:bg-[#0b655e] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {forgotLoading ? 'Enviando...' : 'Enviar solicitação'}
                   </button>
@@ -208,7 +226,7 @@ export function Login() {
                   <button
                     type="button"
                     onClick={() => setForgotPassword(false)}
-                    className="w-full py-4 px-4 text-blue-600 hover:text-blue-700 font-medium"
+                    className="w-full px-4 py-4 font-bold text-acex-teal hover:text-acex-navy"
                   >
                     Voltar para login
                   </button>
@@ -233,7 +251,7 @@ export function Login() {
                   {...register('email')}
                   type="email"
                   placeholder="E-mail"
-                  className="appearance-none relative block w-full px-4 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-lg"
+                  className="acex-input h-14 text-base"
                 />
                 {errors.email && (
                   <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
@@ -248,12 +266,12 @@ export function Login() {
                   {...register('password')}
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Senha"
-                  className="appearance-none relative block w-full px-4 py-4 pr-12 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-lg"
+                  className="acex-input h-14 pr-12 text-base"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-acex-teal"
                   aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -268,7 +286,7 @@ export function Login() {
               <button
                 type="submit"
                 disabled={isLoginDisabled}
-                className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-lg font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="group relative flex h-14 w-full justify-center rounded-xl bg-acex-teal px-4 py-4 text-base font-bold text-white shadow-lg shadow-acex-teal/15 transition-colors hover:bg-[#0b655e] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading ? 'Entrando...' : 'Entrar'}
               </button>
@@ -276,7 +294,7 @@ export function Login() {
               <button
                 type="button"
                 onClick={() => setForgotPassword(true)}
-                className="w-full py-3 px-4 text-blue-600 hover:text-blue-700 font-medium"
+                className="w-full px-4 py-3 font-bold text-acex-teal hover:text-acex-navy"
               >
                 Esqueci minha senha
               </button>
@@ -284,6 +302,7 @@ export function Login() {
           </form>
         )}
       </div>
+      </section>
     </div>
   );
 }

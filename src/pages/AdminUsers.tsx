@@ -83,7 +83,7 @@ export function AdminUsers() {
         email: user.email,
         password: "",
         confirmPassword: "",
-        role: user.role,
+        role: user.role === "general_manager" ? "admin" : user.role,
         status: user.status,
       });
     } else {

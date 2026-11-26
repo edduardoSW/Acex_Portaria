@@ -57,6 +57,12 @@ Já vêm preenchidas no clone. Referência:
 
 - **Porteiro** (`doorman`) → Nova Encomenda, Pendentes, Histórico. Cai em `/porteiro`.
 - **Admin** (`admin`) → Dashboard, Moradores, Usuários, Configurações. Cai em `/admin`.
+- **Gerenciador geral** (`general_manager`) → carteira de condomínios, planos e assinaturas. Cai em `/geral`.
+
+Para habilitar o Gerenciador Geral em um banco existente, aplique a migration
+`supabase/migrations/0005_general_manager_and_subscriptions.sql`, crie o usuário em
+**Authentication → Users** no Supabase e associe seu perfil ao papel `general_manager` com
+`condominium_id = NULL`.
 
 ## Banco de dados
 

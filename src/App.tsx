@@ -15,6 +15,7 @@ const AdminResidents = lazy(() => import('./pages/AdminResidents').then((m) => (
 const AdminUsers = lazy(() => import('./pages/AdminUsers').then((m) => ({ default: m.AdminUsers })));
 const AdminPasswordResetRequests = lazy(() => import('./pages/AdminPasswordResetRequests').then((m) => ({ default: m.AdminPasswordResetRequests })));
 const AdminSettings = lazy(() => import('./pages/AdminSettings').then((m) => ({ default: m.AdminSettings })));
+const GeneralManagerDashboard = lazy(() => import('./pages/GeneralManagerDashboard').then((m) => ({ default: m.GeneralManagerDashboard })));
 
 function PageLoader() {
   return (
@@ -47,7 +48,7 @@ function SetupScreen() {
   );
 }
 
-function ProtectedRoute({ children, requiredRole }: { children: React.ReactNode; requiredRole?: 'admin' | 'doorman' }) {
+function ProtectedRoute({ children, requiredRole }: { children: React.ReactNode; requiredRole?: 'general_manager' | 'admin' | 'doorman' }) {
   const { profile, loading } = useAuth();
 
   if (loading) {
@@ -61,7 +62,9 @@ function ProtectedRoute({ children, requiredRole }: { children: React.ReactNode;
 
   if (requiredRole && profile.role !== requiredRole) {
     console.log('[App] Wrong role, redirecting to correct route');
-    if (profile.role === 'admin') {
+    if (profile.role === 'general_manager') {
+      return <Navigate to="/geral" replace />;
+    } else if (profile.role === 'admin') {
       return <Navigate to="/admin" replace />;
     } else {
       return <Navigate to="/porteiro" replace />;
@@ -79,7 +82,23 @@ function AppRoutes() {
     return <PageLoader />;
   }
 
-  if (profile?.role === 'admin') {
+  if (profile?.role === 'general_manager') {
+    return (
+      <Routes>
+        <Route path="/login" element={<Navigate to="/geral" replace />} />
+        <Route path="/" element={<Navigate to="/geral" replace />} />
+        <Route
+          path="/geral"
+          element={
+            <ProtectedRoute requiredRole="general_manager">
+              <GeneralManagerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/geral" replace />} />
+      </Routes>
+    );
+  } else if (profile?.role === 'admin') {
     console.log('[App] Admin user, showing admin routes');
     return (
       <Routes>
