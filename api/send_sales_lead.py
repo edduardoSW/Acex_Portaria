@@ -51,6 +51,7 @@ class handler(BaseHTTPRequestHandler):
             email = str(payload.get("email", "")).strip().lower()[:160]
             phone = str(payload.get("phone", "")).strip()[:24]
             message = str(payload.get("message", "")).strip()[:1000]
+            trial_requested = bool(payload.get("trial_requested", False))
             units = int(payload.get("units", 0))
 
             if not name or not condominium or not phone or not (1 <= units <= 5000):
@@ -88,6 +89,7 @@ class handler(BaseHTTPRequestHandler):
                 <p><strong>Telefone:</strong> {html.escape(phone)}</p>
                 <p><strong>Unidades:</strong> {units}</p>
                 <p><strong>Plano calculado:</strong> {plan_name} · {price_text}</p>
+                <p><strong>Teste gratuito de 15 dias:</strong> {"Solicitado" if trial_requested else "Não solicitado"}</p>
                 {message_block}
               </div>
             </div>
@@ -97,7 +99,7 @@ class handler(BaseHTTPRequestHandler):
                 "from": email_from,
                 "to": [sales_email],
                 "reply_to": email,
-                "subject": f"Novo lead ACEX · {condominium} · {units} unidades",
+                "subject": f"{'Teste de 15 dias' if trial_requested else 'Novo lead'} ACEX · {condominium} · {units} unidades",
                 "html": email_html,
             }).encode("utf-8")
             request = urllib.request.Request(

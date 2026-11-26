@@ -495,7 +495,7 @@ export function GeneralManagerDashboard() {
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-acex-teal">Nova adesão</p>
                 <h2 id="new-condominium-title" className="mt-1 text-xl font-black text-acex-ink">Cadastrar condomínio</h2>
-                <p className="mt-1 text-sm text-slate-500">O cliente começa com 14 dias de teste.</p>
+                <p className="mt-1 text-sm text-slate-500">O cliente começa com 15 dias de teste gratuito.</p>
               </div>
               <button type="button" onClick={() => setShowNewCondominium(false)} className="rounded-xl p-2 text-slate-400 hover:bg-slate-100" aria-label="Fechar">
                 <X className="h-5 w-5" />

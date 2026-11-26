@@ -62,14 +62,6 @@
     transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 280ms ease;
   }
 
-  .acex-icon-tile::after {
-    content: '';
-    position: absolute;
-    inset: -45% 40% 45% -40%;
-    background: rgba(255, 255, 255, 0.5);
-    transform: rotate(35deg);
-  }
-
   .acex-interactive-card:hover .acex-icon-tile {
     transform: rotate(-5deg) scale(1.08);
     box-shadow: 0 10px 24px -14px currentColor;
@@ -90,6 +82,84 @@
   background: #000;
   color: #e5e5e5;
   color-scheme: dark;
+}
+
+.acex-light {
+  min-height: 100vh;
+  background: #f7f7f5;
+  color: #241e1a;
+  color-scheme: light;
+}
+
+.acex-light .acex-surface {
+  border-color: rgba(28, 24, 21, 0.1);
+  background: #fff;
+  color: #241e1a;
+}
+
+.acex-light .acex-input {
+  border-color: rgba(28, 24, 21, 0.14);
+  background: #fff;
+  color: #241e1a;
+}
+
+.acex-light .acex-input::placeholder {
+  color: #a3a3a3;
+}
+
+.acex-dark .theme-section {
+  background: #000;
+  color: #fff;
+}
+
+.acex-light .theme-section {
+  background: #f8f8f7;
+  color: #171717;
+}
+
+.acex-light .theme-section .text-white {
+  color: #171717;
+}
+
+.acex-light .theme-panel {
+  border-color: rgba(0, 0, 0, 0.1);
+  background: #fff;
+  color: #171717;
+}
+
+.acex-light .theme-panel button {
+  border-color: rgba(0, 0, 0, 0.16);
+  color: #171717;
+}
+
+.acex-dark .theme-panel .pricing-primary {
+  background: #fff;
+  color: #000;
+}
+
+.acex-light .theme-panel button.pricing-primary {
+  background: #000;
+  color: #fff;
+}
+
+.acex-dark .theme-panel .pricing-highlight,
+.acex-dark .theme-panel .pricing-badge {
+  background: #fff;
+  color: #000;
+}
+
+.acex-light .pricing-highlight,
+.acex-light .pricing-badge {
+  background: #000;
+  color: #fff;
+}
+
+.acex-light .pricing-divider {
+  background: rgba(0, 0, 0, 0.09);
+}
+
+.acex-light .bg-black {
+  background-color: #f7f7f5;
 }
 
 .acex-dark .bg-gray-50,

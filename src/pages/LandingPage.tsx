@@ -123,6 +123,7 @@ export function LandingPage() {
         phone: String(form.get('phone') ?? '').trim(),
         units,
         message: String(form.get('message') ?? '').trim(),
+          trial_requested: form.get('trial_requested') === 'yes',
           website: String(form.get('website') ?? ''),
         }),
       });
@@ -184,6 +185,7 @@ export function LandingPage() {
                 <button onClick={() => scrollToLead()} className="h-14 rounded-xl bg-acex-teal px-7 text-base font-black text-acex-navy shadow-xl shadow-black/20 hover:bg-[#d56529]">Calcular investimento</button>
                 <a href="#como-funciona" className="grid h-14 place-items-center rounded-xl border border-white/15 px-7 text-base font-black text-white hover:border-acex-teal hover:text-acex-teal">Conhecer a solução</a>
               </div>
+              <p className="mt-4 flex items-center gap-2 text-sm font-semibold text-acex-taupe"><CheckCircle2 className="h-4 w-4 text-acex-teal" />Teste gratuito por 15 dias, sem compromisso.</p>
             </div>
 
             <div className="relative lg:pl-2 xl:pl-4">
@@ -316,24 +318,25 @@ export function LandingPage() {
                 <label><span className="mb-2 block text-sm font-bold text-acex-ink">E-mail</span><input name="email" required type="email" maxLength={160} className="acex-input" placeholder="voce@condominio.com.br" /></label>
                 <label><span className="mb-2 block text-sm font-bold text-acex-ink">Telefone/WhatsApp</span><input name="phone" required maxLength={24} className="acex-input" placeholder="(27) 99999-9999" /></label>
                 <label className="sm:col-span-2"><span className="mb-2 block text-sm font-bold text-acex-ink">Algo que precisamos saber? <span className="font-normal text-slate-400">Opcional</span></span><textarea name="message" maxLength={1000} rows={4} className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-acex-teal focus:ring-4 focus:ring-acex-teal/10" placeholder="Conte um pouco sobre a operação da portaria." /></label>
+                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 sm:col-span-2"><input type="checkbox" name="trial_requested" value="yes" defaultChecked className="mt-0.5 h-4 w-4 accent-[#e87532]" /><span><strong className="block text-sm text-acex-ink">Quero iniciar o teste gratuito de 15 dias</strong><span className="mt-1 block text-sm text-slate-500">A equipe ACEX entrará em contato para orientar a ativação, sem compromisso de contratação.</span></span></label>
                 <label className="hidden" aria-hidden="true">Website<input name="website" tabIndex={-1} autoComplete="off" /></label>
               </div>
               <div className="mt-6 rounded-2xl bg-acex-mint/70 p-4 text-sm text-acex-navy"><strong>{selectedPlan.name}</strong> para <strong>{units} unidades</strong>{selectedPlan.price ? <> · investimento estimado de <strong>R$ {selectedPlan.price}/mês</strong></> : <> · valor personalizado</>}.</div>
               {error && <p className="mt-4 rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-700">{error}</p>}
               {sent && <div className="mt-4 flex items-start gap-3 rounded-xl bg-emerald-50 p-4 text-emerald-800"><CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" /><p className="text-sm font-semibold">Solicitação enviada. Nossa equipe entrará em contato com você.</p></div>}
-              <button disabled={sending} className="mt-6 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-acex-teal text-base font-black text-acex-navy shadow-lg shadow-acex-teal/15 hover:bg-[#d56529] disabled:cursor-not-allowed disabled:opacity-60">{sending && <Loader2 className="h-5 w-5 animate-spin" />}Enviar e receber proposta</button>
+              <button disabled={sending} className="mt-6 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-acex-teal text-base font-black text-acex-navy shadow-lg shadow-acex-teal/15 hover:bg-[#d56529] disabled:cursor-not-allowed disabled:opacity-60">{sending && <Loader2 className="h-5 w-5 animate-spin" />}Solicitar teste gratuito</button>
               <p className="mt-4 text-center text-xs leading-5 text-slate-400">Ao enviar, você autoriza o contato da equipe ACEX sobre esta proposta.</p>
             </form>
           </div>
         </section>
 
-        <section id="duvidas" className="bg-[#fbf8f4] py-20 lg:py-28">
+        <section id="duvidas" className="theme-section bg-[#fbf8f4] py-20 lg:py-28">
           <div className="mx-auto max-w-3xl px-5 sm:px-8">
             <div className="text-center"><p className="text-sm font-black uppercase tracking-[0.16em] text-acex-teal">Dúvidas frequentes</p><h2 className="mt-4 text-3xl font-black text-acex-navy">Antes de começar</h2></div>
             <div className="mt-10 divide-y divide-slate-200 border-y border-slate-200">
               {[
                 ['Como é definido o plano?', 'O plano é calculado pela quantidade de unidades atendidas pelo condomínio. Acima de 600 unidades, a proposta é personalizada.'],
-                ['Posso testar antes de contratar?', 'Sim. A proposta inclui um período de teste de 14 dias para conhecer a operação do sistema.'],
+                ['Posso testar antes de contratar?', 'Sim. Você pode usar o ACEX Portaria gratuitamente por 15 dias antes de contratar, com acesso à operação do sistema e apoio na implantação.'],
                 ['Preciso instalar algum programa?', 'Não. O ACEX Portaria funciona pela web e pode ser acessado nos dispositivos usados pela equipe, conforme a configuração do condomínio.'],
                 ['A equipe recebe ajuda na implantação?', 'Sim. A implantação inclui apoio para configurar a estrutura inicial e orientar a operação da portaria.'],
               ].map(([question, answer]) => (

@@ -19,7 +19,7 @@ type PricingSectionProps = {
 
 export function PricingSection({ plans, onSelect, onCustom }: PricingSectionProps) {
   return (
-    <section id="planos" className="relative w-full bg-black py-20 font-sans text-white selection:bg-white selection:text-black sm:py-28">
+    <section id="planos" className="theme-section relative w-full bg-black py-20 font-sans text-white selection:bg-white selection:text-black sm:py-28">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <div className="mb-12 flex flex-col items-center text-center sm:mb-16">
           <p className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-acex-teal">Planos transparentes</p>
@@ -27,11 +27,11 @@ export function PricingSection({ plans, onSelect, onCustom }: PricingSectionProp
             Um plano para cada porte. <span className="text-neutral-600">Sem taxas escondidas.</span>
           </h2>
           <p className="mt-5 max-w-xl text-balance text-base leading-7 text-neutral-400 sm:text-lg">
-            Valores por quantidade de unidades residenciais, com implantação assistida e 14 dias para experimentar.
+            Valores por quantidade de unidades residenciais, com implantação assistida e teste gratuito por 15 dias.
           </p>
           <div className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-sm text-neutral-300">
             <span className="h-1.5 w-1.5 rounded-full bg-acex-teal" />
-            Cobrança mensal, sem estrutura complexa
+            15 dias grátis para testar · sem compromisso
           </div>
         </div>
 
@@ -40,18 +40,18 @@ export function PricingSection({ plans, onSelect, onCustom }: PricingSectionProp
             <article
               key={plan.key}
               className={cn(
-                'relative flex flex-col overflow-hidden rounded-xl border bg-[#050505] p-7 transition-colors sm:p-8',
+                'theme-panel relative flex flex-col overflow-hidden rounded-xl border bg-[#050505] p-7 transition-colors sm:p-8',
                 plan.featured ? 'border-white/[0.25] shadow-2xl' : 'border-white/[0.08] hover:border-white/[0.15]',
               )}
             >
-              {plan.featured && <div className="absolute inset-x-0 top-0 h-px bg-white" />}
+              {plan.featured && <div className="pricing-highlight absolute inset-x-0 top-0 h-px bg-white" />}
               <div className="mb-6 flex min-h-20 items-start justify-between gap-3">
                 <div>
                   <h3 className="text-lg font-medium text-white">{plan.name}</h3>
                   <p className="mt-2 text-sm text-neutral-400">{plan.description}</p>
                 </div>
                 {plan.featured && (
-                  <span className="shrink-0 rounded-full bg-white px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-black">
+                  <span className="pricing-badge shrink-0 rounded-full bg-white px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-black">
                     Recomendado
                   </span>
                 )}
@@ -70,14 +70,16 @@ export function PricingSection({ plans, onSelect, onCustom }: PricingSectionProp
                 className={cn(
                   'mb-8 flex h-11 w-full items-center justify-center rounded-md text-sm font-medium transition-all active:scale-[0.98]',
                   plan.featured
-                    ? 'bg-white text-black hover:bg-neutral-200'
+                    ? 'pricing-primary bg-white text-black hover:bg-neutral-200'
                     : 'border border-white/[0.12] bg-transparent text-white hover:bg-white/[0.05]',
                 )}
               >
-                Escolher {plan.name}
+                Testar 15 dias com {plan.name}
               </button>
 
-              <div className="mb-6 h-px w-full bg-white/[0.08]" />
+              <p className="mb-6 text-center font-mono text-[11px] uppercase tracking-widest text-neutral-500">Teste grátis por 15 dias</p>
+
+              <div className="pricing-divider mb-6 h-px w-full bg-white/[0.08]" />
               <ul className="flex flex-col gap-4 text-sm text-neutral-300">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3">
@@ -90,7 +92,7 @@ export function PricingSection({ plans, onSelect, onCustom }: PricingSectionProp
           ))}
         </div>
 
-        <div className="mt-8 flex flex-col items-center justify-between gap-5 rounded-xl border border-white/[0.08] bg-[#050505] p-6 text-center sm:flex-row sm:text-left">
+        <div className="theme-panel mt-8 flex flex-col items-center justify-between gap-5 rounded-xl border border-white/[0.08] bg-[#050505] p-6 text-center sm:flex-row sm:text-left">
           <div>
             <p className="font-medium text-white">Mais de 600 unidades residenciais?</p>
             <p className="mt-1 text-sm text-neutral-500">Criamos uma proposta personalizada para o seu volume e estrutura.</p>

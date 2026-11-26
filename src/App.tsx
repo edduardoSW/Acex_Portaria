@@ -1,6 +1,7 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ThemeToggle, type ThemeMode } from './components/ThemeToggle';
 
 // Cada página é carregada sob demanda (code-splitting por rota): o bundle
 // inicial fica pequeno e cada perfil baixa só as telas que realmente usa.
@@ -210,6 +211,20 @@ function AppRoutes() {
 }
 
 function App() {
+  const [theme, setTheme] = useState<ThemeMode>(() => {
+    const savedTheme = window.localStorage.getItem('acex-theme');
+    if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme;
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  });
+
+  useEffect(() => {
+    window.localStorage.setItem('acex-theme', theme);
+    document.documentElement.style.colorScheme = theme;
+  }, [theme]);
+
+  const themeClassName = `${theme === 'dark' ? 'acex-dark' : 'acex-light'} min-h-screen`;
+  const toggleTheme = () => setTheme((current) => current === 'dark' ? 'light' : 'dark');
+
   const isSupabaseConfigured = 
     import.meta.env.VITE_SUPABASE_URL && 
     import.meta.env.VITE_SUPABASE_URL !== 'https://placeholder.supabase.co' &&
@@ -217,11 +232,11 @@ function App() {
     import.meta.env.VITE_SUPABASE_ANON_KEY !== 'placeholder-key';
 
   if (!isSupabaseConfigured) {
-    return <div className="acex-dark min-h-screen"><SetupScreen /></div>;
+    return <div className={themeClassName}><SetupScreen /><ThemeToggle theme={theme} onToggle={toggleTheme} /></div>;
   }
 
   return (
-    <div className="acex-dark min-h-screen">
+    <div className={themeClassName}>
       <AuthProvider>
         <Router>
           <Suspense fallback={<PageLoader />}>
@@ -229,6 +244,7 @@ function App() {
           </Suspense>
         </Router>
       </AuthProvider>
+      <ThemeToggle theme={theme} onToggle={toggleTheme} />
     </div>
   );
 }
