@@ -1,164 +1,143 @@
-// Follow this setup guide to integrate the Deno language server with your editor:
-// https://deno.land/manual/getting_started/setup_your_environment
-// This enables autocomplete, go to definition, etc.
-
-import { serve } from "https://deno.land/std@0.192.0/http/server.ts";
+import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-console.log("Hello from Functions!");
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
 
-serve(async (req) => {
-  try {
-    // Create a Supabase client with the service role key
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false,
-        },
-      }
-    );
+function jsonResponse(body: Record<string, unknown>, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
 
-    // Get the authorization header
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: "Authorization header is required" }),
-        {
-          status: 401,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
+serve(async (request: Request) => {
+  if (request.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (request.method !== "POST") return jsonResponse({ error: "Metodo nao permitido." }, 405);
 
-    // Get user from JWT
-    const token = authHeader.replace("Bearer ", "");
-    const {
-      data: { user },
-      error: userError,
-    } = await supabaseClient.auth.getUser(token);
-    if (userError) {
-      console.error("Error getting user:", userError);
-      return new Response(JSON.stringify({ error: "Invalid token" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    // Get the admin's profile to verify they are an admin and get their condo ID
-    const { data: adminProfile, error: profileError } = await supabaseClient
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .single();
-    if (profileError) {
-      console.error("Error getting admin profile:", profileError);
-      return new Response(JSON.stringify({ error: "Profile not found" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    if (adminProfile.role !== "admin") {
-      return new Response(JSON.stringify({ error: "Not authorized" }), {
-        status: 403,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    // Get the request body
-    const { userId } = await req.json();
-
-    // Prevent admin from deleting themselves
-    if (userId === adminProfile.id) {
-      return new Response(JSON.stringify({ error: "Cannot delete yourself" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    // Get the user's profile to verify they belong to the same condo
-    const { data: userProfile, error: userProfileError } = await supabaseClient
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)
-      .single();
-    if (userProfileError) {
-      console.error("Error getting user profile:", userProfileError);
-      return new Response(JSON.stringify({ error: "User not found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    if (userProfile.condominium_id !== adminProfile.condominium_id) {
-      return new Response(JSON.stringify({ error: "Not authorized" }), {
-        status: 403,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    // Check if user has any activity logs or packages - if yes, deactivate instead of deleting
-    const { count: packageCount } = await supabaseClient
-      .from("packages")
-      .select("*", { count: "exact", head: true })
-      .or(`registered_by.eq.${userId},delivered_by.eq.${userId}`);
-
-    const { count: logCount } = await supabaseClient
-      .from("activity_logs")
-      .select("*", { count: "exact", head: true })
-      .eq("profile_id", userId);
-
-    if (packageCount && packageCount > 0 || logCount && logCount > 0) {
-      // Deactivate instead of deleting
-      await supabaseClient
-        .from("profiles")
-        .update({ status: "inactive" })
-        .eq("id", userId);
-      // Create an activity log
-      await supabaseClient
-        .from("activity_logs")
-        .insert({
-          action: "user_deactivated",
-          profile_id: adminProfile.id,
-          condominium_id: adminProfile.condominium_id,
-        });
-    } else {
-      // 1. Delete the user from Supabase Auth
-      const { error: authError } = await supabaseClient.auth.admin.deleteUser(userId);
-      if (authError) {
-        console.error("Error deleting auth user:", authError);
-        return new Response(JSON.stringify({ error: authError.message }), {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
-      // 2. Delete profile will cascade (but let's do it anyway)
-      await supabaseClient
-        .from("profiles")
-        .delete()
-        .eq("id", userId);
-
-      // Create an activity log
-      await supabaseClient
-        .from("activity_logs")
-        .insert({
-          action: "user_deleted",
-          profile_id: adminProfile.id,
-          condominium_id: adminProfile.condominium_id,
-        });
-    }
-
-    return new Response(JSON.stringify({ success: true }), {
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (error) {
-    console.error("Unexpected error:", error);
-    return new Response(JSON.stringify({ error: "Internal Server Error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!supabaseUrl || !serviceRoleKey) {
+    return jsonResponse({ error: "Configuracao interna da funcao incompleta." }, 500);
   }
+
+  const authHeader = request.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    return jsonResponse({ error: "Sessao nao encontrada. Entre novamente." }, 401);
+  }
+
+  const adminClient = createClient(supabaseUrl, serviceRoleKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+  const token = authHeader.slice("Bearer ".length).trim();
+  const { data: authData, error: authError } = await adminClient.auth.getUser(token);
+  if (authError || !authData.user) {
+    return jsonResponse({ error: "Sessao invalida ou expirada. Entre novamente." }, 401);
+  }
+
+  const { data: requester, error: requesterError } = await adminClient
+    .from("profiles")
+    .select("id, role, status, condominium_id")
+    .eq("id", authData.user.id)
+    .maybeSingle();
+
+  if (requesterError || !requester || requester.status !== "active") {
+    return jsonResponse({ error: "Perfil ativo do solicitante nao encontrado." }, 403);
+  }
+  if (!["admin", "general_manager"].includes(requester.role)) {
+    return jsonResponse({ error: "Voce nao tem permissao para excluir usuarios." }, 403);
+  }
+
+  let body: { userId?: string };
+  try {
+    body = await request.json();
+  } catch {
+    return jsonResponse({ error: "Corpo da requisicao invalido." }, 400);
+  }
+
+  const userId = body.userId?.trim();
+  if (!userId) return jsonResponse({ error: "Informe o usuario que sera excluido." }, 400);
+  if (userId === requester.id) {
+    return jsonResponse({ error: "Voce nao pode excluir o proprio acesso." }, 400);
+  }
+
+  const { data: target, error: targetError } = await adminClient
+    .from("profiles")
+    .select("id, name, role, condominium_id")
+    .eq("id", userId)
+    .maybeSingle();
+  if (targetError) return jsonResponse({ error: `Erro ao localizar usuario: ${targetError.message}` }, 500);
+  if (!target) return jsonResponse({ error: "Usuario nao encontrado." }, 404);
+
+  if (requester.role === "admin" && target.condominium_id !== requester.condominium_id) {
+    return jsonResponse({ error: "Voce so pode excluir usuarios do seu condominio." }, 403);
+  }
+  if (requester.role === "admin" && target.role === "general_manager") {
+    return jsonResponse({ error: "Administradores nao podem excluir um gerenciador geral." }, 403);
+  }
+
+  const [{ count: packageCount, error: packageError }, { count: logCount, error: logError }] = await Promise.all([
+    adminClient
+      .from("packages")
+      .select("id", { count: "exact", head: true })
+      .or(`registered_by.eq.${userId},delivered_by.eq.${userId}`),
+    adminClient
+      .from("activity_logs")
+      .select("id", { count: "exact", head: true })
+      .eq("profile_id", userId),
+  ]);
+
+  if (packageError || logError) {
+    console.error("Erro ao verificar historico:", packageError ?? logError);
+    return jsonResponse({ error: "Nao foi possivel verificar o historico do usuario." }, 500);
+  }
+
+  const hasHistory = (packageCount ?? 0) > 0 || (logCount ?? 0) > 0;
+  if (hasHistory) {
+    const { error: deactivateError } = await adminClient
+      .from("profiles")
+      .update({ status: "inactive" })
+      .eq("id", userId);
+    if (deactivateError) {
+      return jsonResponse({ error: `Nao foi possivel desativar o usuario: ${deactivateError.message}` }, 400);
+    }
+
+    // Mantem o perfil para preservar o historico e bloqueia o login no Auth.
+    const { error: banError } = await adminClient.auth.admin.updateUserById(userId, {
+      ban_duration: "876000h",
+    });
+    if (banError) {
+      await adminClient.from("profiles").update({ status: "active" }).eq("id", userId);
+      return jsonResponse({ error: `Nao foi possivel bloquear o acesso: ${banError.message}` }, 400);
+    }
+
+    await adminClient.from("activity_logs").insert({
+      action: "user_deactivated",
+      profile_id: requester.id,
+      package_id: null,
+      condominium_id: target.condominium_id ?? requester.condominium_id,
+    });
+    return jsonResponse({ success: true, action: "deactivated" });
+  }
+
+  const { error: deleteAuthError } = await adminClient.auth.admin.deleteUser(userId);
+  if (deleteAuthError) {
+    return jsonResponse({ error: `Nao foi possivel excluir o acesso: ${deleteAuthError.message}` }, 400);
+  }
+
+  // Em projetos sem cascade entre auth.users e profiles, garante a limpeza do perfil.
+  const { error: deleteProfileError } = await adminClient.from("profiles").delete().eq("id", userId);
+  if (deleteProfileError) console.warn("Auth excluido, mas o perfil exigiu limpeza manual:", deleteProfileError);
+
+  await adminClient.from("activity_logs").insert({
+    action: "user_deleted",
+    profile_id: requester.id,
+    package_id: null,
+    condominium_id: target.condominium_id ?? requester.condominium_id,
+  });
+
+  return jsonResponse({ success: true, action: "deleted" });
 });

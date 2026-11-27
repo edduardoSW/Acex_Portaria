@@ -181,11 +181,13 @@ serve(async (req) => {
       }
     }
 
-    // 2. Update auth user if email or password are provided
-    if (email !== undefined || nextPassword !== undefined) {
+    // 2. Mantem o status do perfil sincronizado com o bloqueio no Auth.
+    if (email !== undefined || nextPassword !== undefined || status !== undefined) {
       const authUpdate: any = {};
       if (email !== undefined) authUpdate.email = email;
       if (nextPassword !== undefined) authUpdate.password = nextPassword;
+      if (status === "inactive") authUpdate.ban_duration = "876000h";
+      if (status === "active") authUpdate.ban_duration = "none";
 
       const { error: updateUserError } = await supabaseClient.auth.admin.updateUserById(
         userId,

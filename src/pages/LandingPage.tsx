@@ -61,7 +61,7 @@ const plans: Plan[] = [
     price: 599,
     maxUnits: 600,
     description: 'Estrutura completa para grandes condomínios e operações intensas.',
-    confirmationUsers: 3,
+    confirmationUsers: 4,
     features: ['Tudo do Profissional', 'Maior volume operacional', 'Gestão avançada de acessos', 'Atendimento prioritário'],
   },
 ];

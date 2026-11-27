@@ -16,7 +16,7 @@ confirmação de retirada.
 | `create-user` | Admin → Usuários → **Novo Usuário** | ✅ | ✅ |
 | `create-condominium` | Gerenciador geral cria condomínio, conta admin e convite | ✅ | ✅ |
 | `update-user` | Admin → Usuários → **Editar** | ✅ | ✅ |
-| `delete-user` | Admin → Usuários → **Excluir** (ou desativar) | ✅ | ⚠️ **não** |
+| `delete-user` | Admin/Gerenciador Geral → Usuários → **Excluir** (ou desativar) | ✅ | ✅ |
 | `request-password-reset` | Tela **"Esqueci minha senha"** (registra o pedido) | pública¹ | ✅ |
 | `resolve-password-request` | Admin resolve o pedido de reset | ✅ | ✅ |
 | `send-package-notification` | Notificação de encomenda via **Evolution API** (modo `evolution`) | ✅ | ⚠️ **não** |
@@ -65,30 +65,28 @@ supabase functions deploy send-package-code
 ```
 
 Antes de publicar `create-condominium`, aplique a migration
-`supabase/migrations/0006_condominium_onboarding.sql`. É recomendado configurar `SYSTEM_URL` com a
-URL pública do sistema; sem ela, a função usa a origem autenticada da chamada. Essa mesma migration
-corrige o erro de schema cache relacionado à coluna `city`.
+`supabase/migrations/0006_condominium_onboarding.sql`. Configure obrigatoriamente `SYSTEM_URL` com a
+URL HTTPS pública do sistema. A função não usa mais a origem da chamada como fallback, pois isso
+gerava convites apontando para `localhost` durante o desenvolvimento. Essa mesma migration corrige
+o erro de schema cache relacionado à coluna `city`.
 
 ## Confirmação de retirada por e-mail
 
-Antes do deploy, aplique a migração `0003_package_pickup_email_codes.sql`. Depois configure os
-secrets usados somente no servidor:
+Antes do deploy, aplique a migração `0003_package_pickup_email_codes.sql`. O envio do código de
+retirada usa Gmail SMTP com TLS implícito na porta 465. Configure os secrets somente no servidor:
 
 ```bash
-supabase secrets set RESEND_API_KEY=re_sua_chave
-supabase secrets set EMAIL_FROM="Acex Portaria <portaria@seu-dominio.com>"
+supabase secrets set GMAIL_SMTP_USER=acexpartners@gmail.com
+supabase secrets set GMAIL_SMTP_PASSWORD=sua_senha_de_app_do_google
 supabase secrets set SYSTEM_URL=https://seu-sistema.example
 supabase functions deploy package-pickup --no-verify-jwt
+supabase functions deploy send-package-code
 ```
 
-A chave `RESEND_API_KEY` nunca deve usar o prefixo `VITE_`. O remetente precisa pertencer a um
-domínio validado no Resend. A function autentica o JWT novamente no código antes de usar a chave
-de serviço.
-
-`send-package-code` usa `EMAIL_FROM` quando ele está configurado. Se o secret estiver ausente, a
-função consulta a conta Resend e seleciona automaticamente o primeiro domínio com status
-`verified`. O remetente de testes `onboarding@resend.dev` não deve ser usado para moradores, pois o
-Resend limita esse endereço ao proprietário da conta.
+`GMAIL_SMTP_PASSWORD` deve ser uma senha de app do Google, nunca a senha normal da conta, e não pode
+usar o prefixo `VITE_`. A função autentica o JWT antes de acessar a credencial. O nome exibido do
+remetente é `<nome do condomínio> via ACEX`, o endereço é o valor de `GMAIL_SMTP_USER` e o
+`Reply-To` usa `condominiums.contact_email` quando houver um e-mail válido.
 
 - `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` são **injetados automaticamente** pelo Supabase nas
   functions — **não** configure à mão.
@@ -122,7 +120,7 @@ na tela, veja também **Edge Functions → Logs** para o erro real.
   *service_role* (que ignora RLS), a checagem de `auth.getUser()` **dentro do código** vira a única
   barreira. 5 das 6 já validam o token no código; dá para reativar o gateway (remover `--no-verify-jwt`)
   nessas 5 quando quiser endurecer. A `request-password-reset` deve continuar pública.
-- **`delete-user` e `send-package-notification` não tratam CORS/OPTIONS.** Chamadas do navegador podem
+- **`send-package-notification` não trata CORS/OPTIONS.** Chamadas do navegador podem
   falhar no *preflight*. Correção: adicionar os headers CORS + o handler de `OPTIONS` como nas outras 4.
 - **`request-password-reset` permite enumeração de contas** (resposta diferente para e‑mail existente vs.
   inexistente) e não tem rate limiting — vale uniformizar a resposta e limitar tentativas.

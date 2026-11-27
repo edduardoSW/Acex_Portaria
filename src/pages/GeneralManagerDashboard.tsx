@@ -13,6 +13,7 @@ import {
   MoreHorizontal,
   Plus,
   Search,
+  Trash2,
   UsersRound,
   X,
 } from 'lucide-react';
@@ -146,6 +147,7 @@ export function GeneralManagerDashboard() {
   const [selected, setSelected] = useState<ManagedCondominium | null>(null);
   const [activeView, setActiveView] = useState<ManagerView>('overview');
   const [teamMembers, setTeamMembers] = useState<ManagedProfile[]>([]);
+  const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
 
   const viewTitles: Record<ManagerView, string> = {
     overview: 'Visão geral',
@@ -244,6 +246,37 @@ export function GeneralManagerDashboard() {
     setShowNewCondominium(false);
     setNotice('Condomínio criado. O síndico recebeu um convite para definir a senha e acessar o sistema.');
     setSaving(false);
+    await loadCondominiums();
+  }
+
+  async function handleDeleteUser(member: ManagedProfile) {
+    if (member.id === profile?.id) return;
+
+    const confirmed = window.confirm(
+      `Excluir o acesso de ${member.name}?\n\nSe houver histórico vinculado, o usuário será desativado para preservar os registros.`,
+    );
+    if (!confirmed) return;
+
+    setDeletingUserId(member.id);
+    setError('');
+    setNotice('');
+
+    const { data, error: deleteError } = await supabase.functions.invoke('delete-user', {
+      body: { userId: member.id },
+    });
+
+    if (deleteError || data?.error) {
+      setError(`Não foi possível excluir o usuário: ${data?.error || deleteError?.message || 'erro inesperado'}`);
+      setDeletingUserId(null);
+      return;
+    }
+
+    setNotice(
+      data?.action === 'deactivated'
+        ? `${member.name} foi desativado porque possui histórico no sistema.`
+        : `${member.name} foi excluído do sistema e do acesso de autenticação.`,
+    );
+    setDeletingUserId(null);
     await loadCondominiums();
   }
 
@@ -369,17 +402,31 @@ export function GeneralManagerDashboard() {
                 <div className="overflow-x-auto">
                   <table className="w-full min-w-[720px] text-left">
                     <thead className="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-400">
-                      <tr><th className="px-6 py-4">Usuário</th><th className="px-4 py-4">Perfil</th><th className="px-4 py-4">Condomínio</th><th className="px-4 py-4">Status</th></tr>
+                      <tr><th className="px-6 py-4">Usuário</th><th className="px-4 py-4">Perfil</th><th className="px-4 py-4">Condomínio</th><th className="px-4 py-4">Status</th><th className="px-6 py-4 text-right">Ações</th></tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                       {teamMembers.map((member) => {
                         const condominium = condominiums.find((item) => item.id === member.condominium_id);
                         return (
-                          <tr key={member.id} className="hover:bg-slate-50/70">
+                          <tr key={member.id} className="transition-colors hover:bg-slate-50/70">
                             <td className="px-6 py-4"><p className="font-bold text-acex-ink">{member.name}</p><p className="text-sm text-slate-400">{member.email}</p></td>
                             <td className="px-4 py-4 text-sm font-semibold text-slate-600">{member.role === 'general_manager' ? 'Gerenciador geral' : member.role === 'admin' ? 'Síndico / Admin' : 'Porteiro'}</td>
                             <td className="px-4 py-4 text-sm text-slate-500">{condominium?.name || 'Equipe ACEX'}</td>
                             <td className="px-4 py-4"><span className={`rounded-full px-2.5 py-1 text-xs font-bold ${member.status === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>{member.status === 'active' ? 'Ativo' : 'Inativo'}</span></td>
+                            <td className="px-6 py-4 text-right">
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteUser(member)}
+                                disabled={member.id === profile?.id || deletingUserId === member.id}
+                                className="inline-grid h-9 w-9 place-items-center rounded-lg text-red-400 transition hover:bg-red-500/10 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-30"
+                                aria-label={`Excluir ${member.name}`}
+                                title={member.id === profile?.id ? 'Você não pode excluir o próprio acesso' : `Excluir ${member.name}`}
+                              >
+                                {deletingUserId === member.id
+                                  ? <Loader2 className="h-4 w-4 animate-spin" />
+                                  : <Trash2 className="h-4 w-4" />}
+                              </button>
+                            </td>
                           </tr>
                         );
                       })}
@@ -524,9 +571,9 @@ export function GeneralManagerDashboard() {
               <label>
                 <span className="mb-2 block text-sm font-bold text-acex-ink">Plano</span>
                 <select name="plan" className="acex-input appearance-none">
-                  <option value="essential">Essencial · R$ 199</option>
-                  <option value="professional">Profissional · R$ 349</option>
-                  <option value="enterprise">Enterprise · R$ 599</option>
+                  <option value="essential">Essencial · R$ 199 · 1 usuário</option>
+                  <option value="professional">Profissional · R$ 349 · 2 usuários</option>
+                  <option value="enterprise">Enterprise · R$ 599 · 4 usuários</option>
                 </select>
               </label>
               <label>

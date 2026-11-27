@@ -13,7 +13,12 @@ type PickupResponse = {
 type SendPackageCodeResponse = {
   success: boolean;
   deliveryStatus: 'sent' | 'failed';
-  deliveryReason?: 'provider_not_configured' | 'sender_not_configured' | 'provider_rejected' | 'provider_unavailable' | null;
+  deliveryReason?:
+    | 'gmail_smtp_not_configured'
+    | 'gmail_smtp_user_invalid'
+    | 'gmail_smtp_rejected'
+    | 'provider_unavailable'
+    | null;
   maskedEmail: string;
 };
 
@@ -35,9 +40,9 @@ async function sendPackageCode(packageId: string): Promise<PickupResponse> {
   const response = data as SendPackageCodeResponse;
   const emailSent = response.deliveryStatus === 'sent';
   const failureMessages: Record<string, string> = {
-    provider_not_configured: 'O serviço de e-mail ainda não está configurado.',
-    sender_not_configured: 'O remetente de e-mail ainda não está configurado.',
-    provider_rejected: 'O provedor recusou o envio. Confirme o e-mail do morador e tente reenviar.',
+    gmail_smtp_not_configured: 'O Gmail ainda não está completamente configurado no servidor.',
+    gmail_smtp_user_invalid: 'O endereço remetente configurado é inválido.',
+    gmail_smtp_rejected: 'O Gmail recusou o envio. Verifique a senha de app e o e-mail do morador.',
     provider_unavailable: 'O serviço de e-mail está temporariamente indisponível.',
   };
   return {

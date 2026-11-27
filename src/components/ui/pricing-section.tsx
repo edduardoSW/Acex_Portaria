@@ -75,6 +75,11 @@ export function PricingSection({ plans, onSelect, onCustom }: PricingSectionProp
                   <div>
                     <p className="text-sm font-medium text-white">{plan.confirmationUsers} {plan.confirmationUsers === 1 ? 'usuário autorizado' : 'usuários autorizados'}</p>
                     <p className="mt-1 text-xs leading-5 text-neutral-500">{plan.confirmationUsers === 1 ? 'Recebe' : 'Recebem'} por e-mail o código para confirmar a retirada.</p>
+                    {plan.price && plan.confirmationUsers && (
+                      <p className="mt-2 text-xs font-semibold text-acex-teal">
+                        R$ {formatPrice(plan.price / plan.confirmationUsers)} por usuário/mês
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

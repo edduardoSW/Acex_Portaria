@@ -23,11 +23,16 @@ serve(async (request) => {
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  const systemUrl = Deno.env.get("SYSTEM_URL") ?? request.headers.get("Origin");
+  const systemUrl = Deno.env.get("SYSTEM_URL")?.trim();
   const authHeader = request.headers.get("Authorization");
 
-  if (!supabaseUrl || !serviceRoleKey || !systemUrl || !/^https?:\/\//.test(systemUrl)) {
+  if (!supabaseUrl || !serviceRoleKey) {
     return response({ error: "A funcao de cadastro ainda nao foi configurada." }, 500);
+  }
+  if (!systemUrl || !/^https:\/\//.test(systemUrl)) {
+    return response({
+      error: "Configure o secret SYSTEM_URL com a URL HTTPS publica do sistema antes de enviar convites.",
+    }, 500);
   }
   if (!authHeader?.startsWith("Bearer ")) {
     return response({ error: "Sessao nao encontrada. Entre novamente." }, 401);
@@ -88,6 +93,8 @@ serve(async (request) => {
     }
     condominiumId = condominium.id;
 
+    // Nunca use o Origin da requisicao aqui: durante o desenvolvimento ele e
+    // localhost e produziria um convite inutil para o destinatario.
     const redirectTo = `${systemUrl.replace(/\/$/, "")}/redefinir-senha`;
     const { data: invitation, error: invitationError } = await adminClient.auth.admin.inviteUserByEmail(contactEmail, {
       redirectTo,
