@@ -54,7 +54,7 @@ BEGIN
     selected_price := 349;
   ELSE
     selected_plan := 'enterprise';
-    selected_price := 599;
+    selected_price := 499;
   END IF;
 
   INSERT INTO public.condominiums (

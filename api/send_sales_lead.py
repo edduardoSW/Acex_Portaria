@@ -13,7 +13,7 @@ def calculate_plan(units: int) -> Tuple[str, Optional[int], Optional[int]]:
     if units <= 350:
         return "Profissional", 349, 2
     if units <= 600:
-        return "Enterprise", 599, 4
+        return "Enterprise", 499, 3
     return "Personalizado", None, None
 
 

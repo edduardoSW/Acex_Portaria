@@ -91,14 +91,6 @@ export function PricingSection({ plans, onSelect, onCustom }: PricingSectionProp
                 <span className="text-sm font-medium text-neutral-500">/ mês</span>
               </div>
 
-              {plan.price && plan.maxUnits && (
-                <div className="mb-7 rounded-lg border border-acex-teal/20 bg-acex-teal/[0.08] p-4">
-                  <p className="text-xs font-medium uppercase tracking-widest text-acex-teal">Custo por apartamento</p>
-                  <p className="mt-2 text-2xl font-medium text-white">R$ {formatPrice(plan.price / plan.maxUnits)}</p>
-                  <p className="mt-1 text-xs leading-5 text-neutral-500">por mês, considerando o limite de {plan.maxUnits} unidades do plano</p>
-                </div>
-              )}
-
               <button
                 type="button"
                 onClick={() => onSelect(plan)}

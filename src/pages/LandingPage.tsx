@@ -58,10 +58,10 @@ const plans: Plan[] = [
     key: 'enterprise',
     name: 'Enterprise',
     range: 'De 351 a 600 unidades',
-    price: 599,
+    price: 499,
     maxUnits: 600,
     description: 'Estrutura completa para grandes condomínios e operações intensas.',
-    confirmationUsers: 4,
+    confirmationUsers: 3,
     features: ['Tudo do Profissional', 'Maior volume operacional', 'Gestão avançada de acessos', 'Atendimento prioritário'],
   },
 ];
@@ -104,7 +104,9 @@ export function LandingPage() {
   const [error, setError] = useState('');
   const [activeStep, setActiveStep] = useState(0);
   const selectedPlan = useMemo(() => calculatePlan(units), [units]);
-  const pricePerApartment = selectedPlan.price ? selectedPlan.price / units : null;
+  const pricePerUser = selectedPlan.price && selectedPlan.confirmationUsers
+    ? selectedPlan.price / selectedPlan.confirmationUsers
+    : null;
 
   useEffect(() => {
     const handleUnits = (event: Event) => setUnits((event as CustomEvent<number>).detail);
@@ -359,7 +361,7 @@ export function LandingPage() {
                 <input type="range" min="1" max="800" value={Math.min(units, 800)} onChange={(event) => setUnits(Number(event.target.value))} className="mt-5 w-full accent-[#e87532]" aria-label="Selecionar quantidade de unidades" />
                 <div className="mt-6 border-t border-white/10 pt-6">
                   <div className="flex items-start justify-between gap-4"><div><p className="text-sm font-bold text-acex-lime">Plano recomendado</p><p className="mt-1 text-2xl font-black">{selectedPlan.name}</p><p className="mt-1 text-sm text-white/50">{selectedPlan.range}</p></div><div className="text-right">{selectedPlan.price ? <><p className="text-3xl font-black">R$ {selectedPlan.price}</p><p className="text-xs text-white/45">por mês</p></> : <p className="rounded-full bg-acex-lime px-3 py-2 text-sm font-black text-acex-navy">Sob consulta</p>}</div></div>
-                  {pricePerApartment && <div className="mt-5 flex items-end justify-between gap-4 rounded-lg border border-acex-teal/20 bg-acex-teal/[0.08] p-4"><div><p className="text-xs font-semibold uppercase tracking-wider text-acex-teal">Por apartamento</p><p className="mt-1 text-sm text-white/55">Custo equivalente mensal</p></div><p className="text-right text-2xl font-semibold text-white">R$ {pricePerApartment.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p></div>}
+                  {pricePerUser && <div className="mt-5 flex items-end justify-between gap-4 rounded-lg border border-acex-teal/20 bg-acex-teal/[0.08] p-4"><div><p className="text-xs font-semibold uppercase tracking-wider text-acex-teal">Por usuário autorizado</p><p className="mt-1 text-sm text-white/55">Custo equivalente mensal</p></div><p className="text-right text-2xl font-semibold text-white">R$ {pricePerUser.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p></div>}
                 </div>
               </div>
             </div>
@@ -383,7 +385,7 @@ export function LandingPage() {
                 )}
                 <label className="hidden" aria-hidden="true">Website<input name="website" tabIndex={-1} autoComplete="off" /></label>
               </div>
-              <div className="mt-6 rounded-lg border border-acex-teal/20 bg-acex-teal/[0.08] p-4 text-sm text-acex-ink"><strong>{selectedPlan.name}</strong> para <strong>{units} unidades</strong>{selectedPlan.price ? <> · <strong>R$ {selectedPlan.price}/mês</strong> no total · equivalente a <strong>R$ {pricePerApartment?.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} por apartamento</strong></> : <> · valor personalizado</>}.</div>
+              <div className="mt-6 rounded-lg border border-acex-teal/20 bg-acex-teal/[0.08] p-4 text-sm text-acex-ink"><strong>{selectedPlan.name}</strong> para <strong>{units} unidades</strong>{selectedPlan.price ? <> · <strong>R$ {selectedPlan.price}/mês</strong> no total · equivalente a <strong>R$ {pricePerUser?.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} por usuário autorizado</strong></> : <> · valor personalizado</>}.</div>
               {error && <p className="mt-4 rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-700">{error}</p>}
               {sent && <div className="mt-4 flex items-start gap-3 rounded-xl bg-emerald-50 p-4 text-emerald-800"><CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" /><p className="text-sm font-semibold">{sentMessage}</p></div>}
               <button disabled={sending} className="mt-6 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-acex-teal text-base font-black text-acex-navy shadow-lg shadow-acex-teal/15 hover:bg-[#d56529] disabled:cursor-not-allowed disabled:opacity-60">{sending && <Loader2 className="h-5 w-5 animate-spin" />}{selectedPlan.key === 'custom' ? 'Solicitar proposta personalizada' : 'Criar conta e testar por 15 dias'}</button>

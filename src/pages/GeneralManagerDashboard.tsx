@@ -573,7 +573,7 @@ export function GeneralManagerDashboard() {
                 <select name="plan" className="acex-input appearance-none">
                   <option value="essential">Essencial · R$ 199 · 1 usuário</option>
                   <option value="professional">Profissional · R$ 349 · 2 usuários</option>
-                  <option value="enterprise">Enterprise · R$ 599 · 4 usuários</option>
+                  <option value="enterprise">Enterprise · R$ 499 · 3 usuários</option>
                 </select>
               </label>
               <label>

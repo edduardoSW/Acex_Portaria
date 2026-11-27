@@ -7,7 +7,7 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-const prices = { essential: 199, professional: 349, enterprise: 599 } as const;
+const prices = { essential: 199, professional: 349, enterprise: 499 } as const;
 type Plan = keyof typeof prices;
 
 function response(body: Record<string, unknown>, status = 200) {
