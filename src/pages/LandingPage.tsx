@@ -308,7 +308,7 @@ export function LandingPage() {
                   <input id="unit-count" type="number" min="1" max="5000" value={units} onChange={(event) => setUnits(Math.max(1, Math.min(5000, Number(event.target.value) || 1)))} className="h-14 min-w-0 flex-1 rounded-xl border border-white/15 bg-white/10 px-4 text-xl font-black text-white outline-none focus:border-acex-lime" />
                   <div className="rounded-xl bg-white/10 px-4 py-4 text-sm font-bold text-white/55">unidades</div>
                 </div>
-                <input type="range" min="1" max="800" value={Math.min(units, 800)} onChange={(event) => setUnits(Number(event.target.value))} className="mt-5 w-full accent-[#b8d83d]" aria-label="Selecionar quantidade de unidades" />
+                <input type="range" min="1" max="800" value={Math.min(units, 800)} onChange={(event) => setUnits(Number(event.target.value))} className="mt-5 w-full accent-[#e87532]" aria-label="Selecionar quantidade de unidades" />
                 <div className="mt-6 border-t border-white/10 pt-6">
                   <div className="flex items-start justify-between gap-4"><div><p className="text-sm font-bold text-acex-lime">Plano recomendado</p><p className="mt-1 text-2xl font-black">{selectedPlan.name}</p><p className="mt-1 text-sm text-white/50">{selectedPlan.range}</p></div><div className="text-right">{selectedPlan.price ? <><p className="text-3xl font-black">R$ {selectedPlan.price}</p><p className="text-xs text-white/45">por mês</p></> : <p className="rounded-full bg-acex-lime px-3 py-2 text-sm font-black text-acex-navy">Sob consulta</p>}</div></div>
                 </div>

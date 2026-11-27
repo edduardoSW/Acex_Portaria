@@ -95,3 +95,4 @@ Tabelas principais (todas com **Row Level Security** por condomínio):
 | **[COLABORACAO.md](docs/COLABORACAO.md)** | Trabalhar em dupla sem conflito (fluxo Git + regras do Supabase compartilhado). |
 | **[EDGE_FUNCTIONS_SETUP.md](docs/EDGE_FUNCTIONS_SETUP.md)** | Deploy das 6 Edge Functions (gestão de usuários, reset de senha, notificação). |
 | **[EMAIL_PYTHON_SETUP.md](docs/EMAIL_PYTHON_SETUP.md)** | Configuração do formulário comercial em Python na Vercel. |
+| **[AUTH_GOOGLE_EMAIL_SETUP.md](docs/AUTH_GOOGLE_EMAIL_SETUP.md)** | Ativação do Google OAuth, URLs permitidas e recuperação de senha por e-mail. |

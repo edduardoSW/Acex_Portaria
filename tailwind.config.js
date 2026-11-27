@@ -7,17 +7,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        'acex-navy': '#1c1815',
-        'acex-panel': '#28221e',
+        'acex-navy': '#0a0a0a',
+        'acex-panel': '#111111',
         'acex-teal': '#e87532',
-        'acex-mint': '#f5e5d9',
-        'acex-lime': '#f18a4b',
-        'acex-cream': '#f4efe8',
-        'acex-taupe': '#b6aa9e',
-        'acex-ink': '#241e1a',
+        'acex-mint': '#fff0e6',
+        'acex-lime': '#e87532',
+        'acex-cream': '#f7f7f5',
+        'acex-taupe': '#a3a3a3',
+        'acex-ink': '#171717',
       },
       boxShadow: {
-        'acex': '0 18px 45px -28px rgba(28, 24, 21, 0.5)',
+        'acex': '0 18px 45px -28px rgba(0, 0, 0, 0.42)',
       },
     },
   },

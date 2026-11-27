@@ -57,6 +57,17 @@ function ProtectedRoute({ children, requiredRole }: { children: React.ReactNode;
     return <PageLoader />;
   }
 
+  // A sessão de recuperação é autenticada pelo Supabase, mas precisa permanecer
+  // nesta rota até o usuário definir a nova senha.
+  if (window.location.pathname === '/redefinir-senha') {
+    return (
+      <Routes>
+        <Route path="/redefinir-senha" element={<Login />} />
+        <Route path="*" element={<Navigate to="/redefinir-senha" replace />} />
+      </Routes>
+    );
+  }
+
   if (!profile) {
     console.log('[App] No profile, redirecting to /login');
     return <Navigate to="/login" replace />;
@@ -205,6 +216,7 @@ function AppRoutes() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/planos" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/redefinir-senha" element={<Login />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
