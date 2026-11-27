@@ -33,6 +33,7 @@ export function Login() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [recoveryLoading, setRecoveryLoading] = useState(false);
   const [recoverySuccess, setRecoverySuccess] = useState(false);
+  const googleLoginEnabled = import.meta.env.VITE_ENABLE_GOOGLE_LOGIN === 'true';
   const navigate = useNavigate();
 
   const {
@@ -353,17 +354,20 @@ export function Login() {
               </div>
             )}
 
-            <button
-              type="button"
-              onClick={handleGoogleLogin}
-              disabled={googleLoading}
-              className="flex h-14 w-full items-center justify-center gap-3 rounded-md border border-slate-200 bg-white text-base font-semibold text-acex-ink transition hover:border-acex-teal/50 hover:bg-acex-mint/40 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5"><path fill="#4285F4" d="M21.35 11.1h-9.18v2.98h5.28c-.23 1.56-1.79 4.58-5.28 4.58-3.18 0-5.78-2.63-5.78-5.86s2.6-5.86 5.78-5.86c1.81 0 3.02.77 3.71 1.45l2.53-2.48C16.79 4.37 14.68 3.4 12.17 3.4c-5.03 0-9.1 4.22-9.1 9.4s4.07 9.4 9.1 9.4c5.25 0 8.72-3.8 8.72-9.15 0-.62-.07-1.1-.15-1.55z" /></svg>
-              {googleLoading ? 'Conectando...' : 'Continuar com Google'}
-            </button>
-
-            <div className="flex items-center gap-3 text-xs uppercase tracking-widest text-slate-400"><span className="h-px flex-1 bg-slate-200" /><span>ou use seu e-mail</span><span className="h-px flex-1 bg-slate-200" /></div>
+            {googleLoginEnabled && (
+              <>
+                <button
+                  type="button"
+                  onClick={handleGoogleLogin}
+                  disabled={googleLoading}
+                  className="flex h-14 w-full items-center justify-center gap-3 rounded-md border border-slate-200 bg-white text-base font-semibold text-acex-ink transition hover:border-acex-teal/50 hover:bg-acex-mint/40 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5"><path fill="#4285F4" d="M21.35 11.1h-9.18v2.98h5.28c-.23 1.56-1.79 4.58-5.28 4.58-3.18 0-5.78-2.63-5.78-5.86s2.6-5.86 5.78-5.86c1.81 0 3.02.77 3.71 1.45l2.53-2.48C16.79 4.37 14.68 3.4 12.17 3.4c-5.03 0-9.1 4.22-9.1 9.4s4.07 9.4 9.1 9.4c5.25 0 8.72-3.8 8.72-9.15 0-.62-.07-1.1-.15-1.55z" /></svg>
+                  {googleLoading ? 'Conectando...' : 'Continuar com Google'}
+                </button>
+                <div className="flex items-center gap-3 text-xs uppercase tracking-widest text-slate-400"><span className="h-px flex-1 bg-slate-200" /><span>ou use seu e-mail</span><span className="h-px flex-1 bg-slate-200" /></div>
+              </>
+            )}
             
             <div className="space-y-4">
               <div>

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { AcexCredit, AcexLogo } from '../components/AcexLogo';
 import { PricingSection } from '../components/ui/pricing-section';
+import { supabase } from '../lib/supabase';
 
 type PlanKey = 'essential' | 'professional' | 'enterprise' | 'custom';
 
@@ -24,6 +25,7 @@ type Plan = {
   name: string;
   range: string;
   price: number | null;
+  maxUnits: number | null;
   description: string;
   confirmationUsers: number | null;
   features: string[];
@@ -36,6 +38,7 @@ const plans: Plan[] = [
     name: 'Essencial',
     range: 'Até 150 unidades',
     price: 199,
+    maxUnits: 150,
     description: 'Para condomínios que querem organizar a portaria sem complicação.',
     confirmationUsers: 1,
     features: ['Cadastro de moradores', 'Controle de encomendas', 'Avisos aos moradores', 'Histórico de retiradas'],
@@ -45,6 +48,7 @@ const plans: Plan[] = [
     name: 'Profissional',
     range: 'De 151 a 350 unidades',
     price: 349,
+    maxUnits: 350,
     description: 'Mais capacidade para operações com maior volume e mais usuários.',
     confirmationUsers: 2,
     features: ['Tudo do Essencial', 'Múltiplos porteiros', 'Códigos de retirada', 'Painel administrativo completo'],
@@ -55,6 +59,7 @@ const plans: Plan[] = [
     name: 'Enterprise',
     range: 'De 351 a 600 unidades',
     price: 599,
+    maxUnits: 600,
     description: 'Estrutura completa para grandes condomínios e operações intensas.',
     confirmationUsers: 3,
     features: ['Tudo do Profissional', 'Maior volume operacional', 'Gestão avançada de acessos', 'Atendimento prioritário'],
@@ -76,6 +81,7 @@ function calculatePlan(units: number): Plan {
     name: 'Personalizado',
     range: 'Acima de 600 unidades',
     price: null,
+    maxUnits: null,
     description: 'Uma proposta desenhada para a estrutura e o volume da sua operação.',
     confirmationUsers: null,
     features: ['Escala personalizada', 'Implantação assistida', 'Condições comerciais sob medida'],
@@ -94,9 +100,11 @@ export function LandingPage() {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [sentMessage, setSentMessage] = useState('');
   const [error, setError] = useState('');
   const [activeStep, setActiveStep] = useState(0);
   const selectedPlan = useMemo(() => calculatePlan(units), [units]);
+  const pricePerApartment = selectedPlan.price ? selectedPlan.price / units : null;
 
   useEffect(() => {
     const handleUnits = (event: Event) => setUnits((event as CustomEvent<number>).detail);
@@ -114,28 +122,68 @@ export function LandingPage() {
     const formElement = event.currentTarget;
     setSending(true);
     setSent(false);
+    setSentMessage('');
     setError('');
 
     const form = new FormData(formElement);
     try {
+      const name = String(form.get('name') ?? '').trim();
+      const condominium = String(form.get('condominium') ?? '').trim();
+      const email = String(form.get('email') ?? '').trim().toLowerCase();
+      const password = String(form.get('password') ?? '');
+      const confirmPassword = String(form.get('confirm_password') ?? '');
+      const createsAccount = selectedPlan.key !== 'custom';
+
+      if (createsAccount) {
+        if (password.length < 8) throw new Error('A senha deve ter pelo menos 8 caracteres.');
+        if (password !== confirmPassword) throw new Error('As senhas informadas não são iguais.');
+
+        const { error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/login`,
+            data: {
+              acex_signup_source: 'landing_trial',
+              name,
+              condominium_name: condominium,
+              units_count: units,
+              phone: String(form.get('phone') ?? '').trim(),
+            },
+          },
+        });
+        if (signUpError) throw new Error(signUpError.message);
+      }
+
       const response = await fetch('/api/send_sales_lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-        name: String(form.get('name') ?? '').trim(),
-        condominium: String(form.get('condominium') ?? '').trim(),
-        email: String(form.get('email') ?? '').trim().toLowerCase(),
-        phone: String(form.get('phone') ?? '').trim(),
-        units,
-        message: String(form.get('message') ?? '').trim(),
+          name,
+          condominium,
+          email,
+          phone: String(form.get('phone') ?? '').trim(),
+          units,
+          message: String(form.get('message') ?? '').trim(),
           trial_requested: form.get('trial_requested') === 'yes',
           website: String(form.get('website') ?? ''),
         }),
       });
       const data = await response.json().catch(() => ({}));
-      if (!response.ok || data?.error) throw new Error(data?.error || 'Não foi possível enviar agora.');
+      if (!response.ok || data?.error) {
+        if (createsAccount) {
+          setSent(true);
+          setSentMessage('Sua conta foi criada. Confirme o e-mail para entrar; a equipe comercial será avisada assim que o canal de propostas estiver disponível.');
+          formElement.reset();
+          return;
+        }
+        throw new Error(data?.error || 'Não foi possível enviar agora.');
+      }
 
       setSent(true);
+      setSentMessage(createsAccount
+        ? 'Conta criada com sucesso. Enviamos um e-mail de confirmação para ativar o acesso e iniciar os 15 dias grátis.'
+        : 'Solicitação enviada. Nossa equipe entrará em contato com você.');
       formElement.reset();
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : 'Não foi possível enviar agora. Tente novamente.');
@@ -296,13 +344,13 @@ export function LandingPage() {
           onCustom={() => scrollToLead(601)}
         />
 
-        <section id="simulacao" className="scroll-mt-20 bg-acex-cream py-20 lg:py-28">
-          <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[.85fr_1.15fr] lg:items-start">
-            <div className="lg:sticky lg:top-28">
+        <section id="simulacao" className="theme-section scroll-mt-20 bg-acex-cream py-20 lg:py-28">
+          <div className="mx-auto grid max-w-7xl gap-6 px-5 sm:px-8 lg:grid-cols-[.85fr_1.15fr] lg:items-start">
+            <div className="theme-panel rounded-xl border border-white/[0.08] bg-[#050505] p-6 sm:p-8 lg:sticky lg:top-28">
               <p className="text-sm font-black uppercase tracking-[0.16em] text-acex-teal">Simule agora</p>
               <h2 className="mt-4 text-3xl font-black tracking-tight text-acex-navy sm:text-4xl">Descubra o plano ideal.</h2>
-              <p className="mt-4 text-lg leading-8 text-slate-600">Informe a quantidade de unidades ou moradores atendidos pela portaria.</p>
-              <div className="mt-8 rounded-3xl bg-acex-navy p-6 text-white shadow-xl">
+              <p className="mt-4 text-base leading-7 text-slate-500">Informe a quantidade de apartamentos ou unidades atendidas pela portaria.</p>
+              <div className="simulation-panel mt-7 rounded-xl border border-white/[0.08] bg-black/40 p-5 text-white">
                 <label htmlFor="unit-count" className="text-sm font-bold text-white/65">Quantidade de unidades</label>
                 <div className="mt-3 flex items-center gap-3">
                   <input id="unit-count" type="number" min="1" max="5000" value={units} onChange={(event) => setUnits(Math.max(1, Math.min(5000, Number(event.target.value) || 1)))} className="h-14 min-w-0 flex-1 rounded-xl border border-white/15 bg-white/10 px-4 text-xl font-black text-white outline-none focus:border-acex-lime" />
@@ -311,25 +359,34 @@ export function LandingPage() {
                 <input type="range" min="1" max="800" value={Math.min(units, 800)} onChange={(event) => setUnits(Number(event.target.value))} className="mt-5 w-full accent-[#e87532]" aria-label="Selecionar quantidade de unidades" />
                 <div className="mt-6 border-t border-white/10 pt-6">
                   <div className="flex items-start justify-between gap-4"><div><p className="text-sm font-bold text-acex-lime">Plano recomendado</p><p className="mt-1 text-2xl font-black">{selectedPlan.name}</p><p className="mt-1 text-sm text-white/50">{selectedPlan.range}</p></div><div className="text-right">{selectedPlan.price ? <><p className="text-3xl font-black">R$ {selectedPlan.price}</p><p className="text-xs text-white/45">por mês</p></> : <p className="rounded-full bg-acex-lime px-3 py-2 text-sm font-black text-acex-navy">Sob consulta</p>}</div></div>
+                  {pricePerApartment && <div className="mt-5 flex items-end justify-between gap-4 rounded-lg border border-acex-teal/20 bg-acex-teal/[0.08] p-4"><div><p className="text-xs font-semibold uppercase tracking-wider text-acex-teal">Por apartamento</p><p className="mt-1 text-sm text-white/55">Custo equivalente mensal</p></div><p className="text-right text-2xl font-semibold text-white">R$ {pricePerApartment.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p></div>}
                 </div>
               </div>
             </div>
 
-            <form onSubmit={handleLead} className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-acex sm:p-8">
+            <form onSubmit={handleLead} className="theme-panel rounded-xl border border-white/[0.08] bg-[#050505] p-6 sm:p-8">
               <div className="flex items-center gap-3"><div className="grid h-11 w-11 place-items-center rounded-xl bg-acex-mint text-acex-teal"><Building2 className="h-5 w-5" /></div><div><h3 className="text-xl font-black text-acex-navy">Receber proposta</h3><p className="text-sm text-slate-500">Enviaremos os detalhes para o seu e-mail.</p></div></div>
               <div className="mt-7 grid gap-5 sm:grid-cols-2">
                 <label><span className="mb-2 block text-sm font-bold text-acex-ink">Seu nome</span><input name="name" required maxLength={100} className="acex-input" placeholder="Nome completo" /></label>
                 <label><span className="mb-2 block text-sm font-bold text-acex-ink">Condomínio</span><input name="condominium" required maxLength={120} className="acex-input" placeholder="Nome do condomínio" /></label>
                 <label><span className="mb-2 block text-sm font-bold text-acex-ink">E-mail</span><input name="email" required type="email" maxLength={160} className="acex-input" placeholder="voce@condominio.com.br" /></label>
                 <label><span className="mb-2 block text-sm font-bold text-acex-ink">Telefone/WhatsApp</span><input name="phone" required maxLength={24} className="acex-input" placeholder="(27) 99999-9999" /></label>
+                {selectedPlan.key !== 'custom' && <>
+                  <label><span className="mb-2 block text-sm font-bold text-acex-ink">Crie sua senha</span><input name="password" required type="password" minLength={8} autoComplete="new-password" className="acex-input" placeholder="Mínimo de 8 caracteres" /></label>
+                  <label><span className="mb-2 block text-sm font-bold text-acex-ink">Confirme sua senha</span><input name="confirm_password" required type="password" minLength={8} autoComplete="new-password" className="acex-input" placeholder="Digite novamente" /></label>
+                </>}
                 <label className="sm:col-span-2"><span className="mb-2 block text-sm font-bold text-acex-ink">Algo que precisamos saber? <span className="font-normal text-slate-400">Opcional</span></span><textarea name="message" maxLength={1000} rows={4} className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-acex-teal focus:ring-4 focus:ring-acex-teal/10" placeholder="Conte um pouco sobre a operação da portaria." /></label>
-                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 sm:col-span-2"><input type="checkbox" name="trial_requested" value="yes" defaultChecked className="mt-0.5 h-4 w-4 accent-[#e87532]" /><span><strong className="block text-sm text-acex-ink">Quero iniciar o teste gratuito de 15 dias</strong><span className="mt-1 block text-sm text-slate-500">A equipe ACEX entrará em contato para orientar a ativação, sem compromisso de contratação.</span></span></label>
+                {selectedPlan.key === 'custom' ? (
+                  <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 sm:col-span-2"><input type="checkbox" name="trial_requested" value="yes" defaultChecked className="mt-0.5 h-4 w-4 accent-[#e87532]" /><span><strong className="block text-sm text-acex-ink">Quero avaliar um teste de 15 dias</strong><span className="mt-1 block text-sm text-slate-500">A equipe ACEX entrará em contato para preparar uma implantação adequada à operação.</span></span></label>
+                ) : (
+                  <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 sm:col-span-2"><input type="checkbox" name="trial_requested" value="yes" required defaultChecked className="mt-0.5 h-4 w-4 accent-[#e87532]" /><span><strong className="block text-sm text-acex-ink">Criar minha conta e iniciar o teste gratuito de 15 dias</strong><span className="mt-1 block text-sm text-slate-500">Seu condomínio e o acesso de administrador serão preparados automaticamente. Você só precisa confirmar o e-mail.</span></span></label>
+                )}
                 <label className="hidden" aria-hidden="true">Website<input name="website" tabIndex={-1} autoComplete="off" /></label>
               </div>
-              <div className="mt-6 rounded-2xl bg-acex-mint/70 p-4 text-sm text-acex-navy"><strong>{selectedPlan.name}</strong> para <strong>{units} unidades</strong>{selectedPlan.price ? <> · investimento estimado de <strong>R$ {selectedPlan.price}/mês</strong></> : <> · valor personalizado</>}.</div>
+              <div className="mt-6 rounded-lg border border-acex-teal/20 bg-acex-teal/[0.08] p-4 text-sm text-acex-ink"><strong>{selectedPlan.name}</strong> para <strong>{units} unidades</strong>{selectedPlan.price ? <> · <strong>R$ {selectedPlan.price}/mês</strong> no total · equivalente a <strong>R$ {pricePerApartment?.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} por apartamento</strong></> : <> · valor personalizado</>}.</div>
               {error && <p className="mt-4 rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-700">{error}</p>}
-              {sent && <div className="mt-4 flex items-start gap-3 rounded-xl bg-emerald-50 p-4 text-emerald-800"><CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" /><p className="text-sm font-semibold">Solicitação enviada. Nossa equipe entrará em contato com você.</p></div>}
-              <button disabled={sending} className="mt-6 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-acex-teal text-base font-black text-acex-navy shadow-lg shadow-acex-teal/15 hover:bg-[#d56529] disabled:cursor-not-allowed disabled:opacity-60">{sending && <Loader2 className="h-5 w-5 animate-spin" />}Solicitar teste gratuito</button>
+              {sent && <div className="mt-4 flex items-start gap-3 rounded-xl bg-emerald-50 p-4 text-emerald-800"><CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" /><p className="text-sm font-semibold">{sentMessage}</p></div>}
+              <button disabled={sending} className="mt-6 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-acex-teal text-base font-black text-acex-navy shadow-lg shadow-acex-teal/15 hover:bg-[#d56529] disabled:cursor-not-allowed disabled:opacity-60">{sending && <Loader2 className="h-5 w-5 animate-spin" />}{selectedPlan.key === 'custom' ? 'Solicitar proposta personalizada' : 'Criar conta e testar por 15 dias'}</button>
               <p className="mt-4 text-center text-xs leading-5 text-slate-400">Ao enviar, você autoriza o contato da equipe ACEX sobre esta proposta.</p>
             </form>
           </div>

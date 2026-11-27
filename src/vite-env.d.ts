@@ -6,6 +6,7 @@ interface ImportMetaEnv {
   readonly VITE_EVOLUTION_API_URL: string;
   readonly VITE_EVOLUTION_API_KEY: string;
   readonly VITE_EVOLUTION_INSTANCE: string;
+  readonly VITE_ENABLE_GOOGLE_LOGIN?: string;
 }
 
 interface ImportMeta {

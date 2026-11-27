@@ -27,6 +27,9 @@ Sem essas URLs, o Supabase pode bloquear o retorno do Google ou do link de recup
 3. Em **Authorized redirect URIs**, adicione o callback exibido em **Supabase → Authentication → Providers → Google**. Normalmente ele segue o formato:
    `https://SEU-PROJECT-REF.supabase.co/auth/v1/callback`.
 4. Copie o Client ID e Client Secret para o provedor Google no Supabase e ative-o.
+5. Somente depois de confirmar que o provedor está ativo, defina `VITE_ENABLE_GOOGLE_LOGIN=true` no ambiente de deploy e gere um novo build.
+
+Enquanto essa variável não estiver definida como `true`, o botão Google fica oculto. Isso evita que o usuário seja enviado para a resposta `provider is not enabled` do Supabase.
 
 O acesso pelo Google é permitido somente quando o usuário autenticado possui uma linha correspondente em `public.profiles`. Isso preserva o condomínio, o papel e o status existentes. Contas Google sem perfil são desconectadas com uma mensagem orientando o contato com o administrador.
 

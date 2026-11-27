@@ -138,6 +138,7 @@ export function GeneralManagerDashboard() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<'all' | SubscriptionStatus>('all');
   const [showNewCondominium, setShowNewCondominium] = useState(false);
@@ -222,31 +223,26 @@ export function GeneralManagerDashboard() {
     event.preventDefault();
     setSaving(true);
     setError('');
+    setNotice('');
     const form = new FormData(event.currentTarget);
-    const units = Number(form.get('units_count')) || 0;
-    const plan = String(form.get('plan')) as Plan;
-    const valueByPlan: Record<Plan, number> = { essential: 199, professional: 349, enterprise: 599 };
-
-    const { error: insertError } = await supabase.from('condominiums').insert({
+    const { data, error: createError } = await supabase.functions.invoke('create-condominium', { body: {
       name: String(form.get('name')).trim(),
       city: String(form.get('city')).trim() || null,
       state: String(form.get('state')).trim().toUpperCase() || null,
-      units_count: units,
-      plan,
-      monthly_value: valueByPlan[plan],
-      subscription_status: 'trial',
+      units_count: Number(form.get('units_count')) || 0,
+      plan: String(form.get('plan')) as Plan,
       contact_name: String(form.get('contact_name')).trim() || null,
       contact_email: String(form.get('contact_email')).trim().toLowerCase() || null,
-      trial_ends_at: new Date(Date.now() + 14 * 86400000).toISOString(),
-    });
+    } });
 
-    if (insertError) {
-      setError(`Não foi possível cadastrar: ${insertError.message}`);
+    if (createError || data?.error) {
+      setError(`Não foi possível cadastrar: ${data?.error || createError?.message || 'erro inesperado'}`);
       setSaving(false);
       return;
     }
 
     setShowNewCondominium(false);
+    setNotice('Condomínio criado. O síndico recebeu um convite para definir a senha e acessar o sistema.');
     setSaving(false);
     await loadCondominiums();
   }
@@ -351,6 +347,13 @@ export function GeneralManagerDashboard() {
             <div className="mt-6 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
               <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
               <p>{error}</p>
+            </div>
+          )}
+
+          {notice && (
+            <div className="mt-6 flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" />
+              <p>{notice}</p>
             </div>
           )}
 
@@ -528,11 +531,11 @@ export function GeneralManagerDashboard() {
               </label>
               <label>
                 <span className="mb-2 block text-sm font-bold text-acex-ink">Contato responsável</span>
-                <input name="contact_name" className="acex-input" placeholder="Nome do síndico" />
+                <input name="contact_name" required className="acex-input" placeholder="Nome do síndico" />
               </label>
               <label>
                 <span className="mb-2 block text-sm font-bold text-acex-ink">E-mail do contato</span>
-                <input name="contact_email" type="email" className="acex-input" placeholder="sindico@condominio.com.br" />
+                <input name="contact_email" required type="email" className="acex-input" placeholder="sindico@condominio.com.br" />
               </label>
             </div>
             <div className="flex justify-end gap-3 border-t border-slate-100 bg-slate-50/70 p-5">

@@ -14,12 +14,14 @@ confirmação de retirada.
 | Function | Powers (o que quebra sem ela) | Valida JWT no código | Trata CORS |
 |----------|-------------------------------|:---:|:---:|
 | `create-user` | Admin → Usuários → **Novo Usuário** | ✅ | ✅ |
+| `create-condominium` | Gerenciador geral cria condomínio, conta admin e convite | ✅ | ✅ |
 | `update-user` | Admin → Usuários → **Editar** | ✅ | ✅ |
 | `delete-user` | Admin → Usuários → **Excluir** (ou desativar) | ✅ | ⚠️ **não** |
 | `request-password-reset` | Tela **"Esqueci minha senha"** (registra o pedido) | pública¹ | ✅ |
 | `resolve-password-request` | Admin resolve o pedido de reset | ✅ | ✅ |
 | `send-package-notification` | Notificação de encomenda via **Evolution API** (modo `evolution`) | ✅ | ⚠️ **não** |
 | `package-pickup` | Confirmação de retirada por código e e-mail | ✅ | ✅ |
+| `send-package-code` | Gera o código, mantém o valor oculto e envia ao morador | ✅ | ✅ |
 
 ¹ `request-password-reset` é **pública por design** (o usuário deslogado precisa chamá-la), então
 não valida JWT — e deve continuar assim.
@@ -52,13 +54,20 @@ supabase link --project-ref jgoilgxilwempiirbsph
 
 ```bash
 supabase functions deploy create-user --no-verify-jwt
+supabase functions deploy create-condominium
 supabase functions deploy update-user --no-verify-jwt
 supabase functions deploy delete-user --no-verify-jwt
 supabase functions deploy request-password-reset --no-verify-jwt
 supabase functions deploy resolve-password-request --no-verify-jwt
 supabase functions deploy send-package-notification --no-verify-jwt
 supabase functions deploy package-pickup --no-verify-jwt
+supabase functions deploy send-package-code
 ```
+
+Antes de publicar `create-condominium`, aplique a migration
+`supabase/migrations/0006_condominium_onboarding.sql`. É recomendado configurar `SYSTEM_URL` com a
+URL pública do sistema; sem ela, a função usa a origem autenticada da chamada. Essa mesma migration
+corrige o erro de schema cache relacionado à coluna `city`.
 
 ## Confirmação de retirada por e-mail
 
@@ -75,6 +84,11 @@ supabase functions deploy package-pickup --no-verify-jwt
 A chave `RESEND_API_KEY` nunca deve usar o prefixo `VITE_`. O remetente precisa pertencer a um
 domínio validado no Resend. A function autentica o JWT novamente no código antes de usar a chave
 de serviço.
+
+`send-package-code` usa `EMAIL_FROM` quando ele está configurado. Se o secret estiver ausente, a
+função consulta a conta Resend e seleciona automaticamente o primeiro domínio com status
+`verified`. O remetente de testes `onboarding@resend.dev` não deve ser usado para moradores, pois o
+Resend limita esse endereço ao proprietário da conta.
 
 - `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` são **injetados automaticamente** pelo Supabase nas
   functions — **não** configure à mão.

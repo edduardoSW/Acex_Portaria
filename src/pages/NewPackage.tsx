@@ -12,7 +12,7 @@ export function NewPackage() {
   const [selectedResident, setSelectedResident] = useState<Resident | null>(null);
   const [loading, setLoading] = useState(true);
   const [registering, setRegistering] = useState(false);
-  const [result, setResult] = useState<{ emailSent: boolean } | null>(null);
+  const [result, setResult] = useState<{ emailSent: boolean; message: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const registrationInProgress = useRef(false);
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ export function NewPackage() {
     setRegistering(true);
     try {
       const response = await pickupCodeService.create(selectedResident.id);
-      setResult({ emailSent: Boolean(response.emailSent) });
+      setResult({ emailSent: Boolean(response.emailSent), message: response.message });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Não foi possível registrar a encomenda');
     } finally {
@@ -65,7 +65,7 @@ export function NewPackage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-3">Encomenda registrada</h2>
           <div className={`mb-8 rounded-xl border p-4 ${result.emailSent ? 'border-green-200 bg-green-50 text-green-800' : 'border-yellow-200 bg-yellow-50 text-yellow-800'}`}>
             <Mail className="mx-auto mb-2 h-6 w-6" />
-            {result.emailSent ? 'Código de retirada enviado por e-mail com sucesso.' : 'Aguardando retirada, mas houve falha no envio do e-mail.'}
+            {result.emailSent ? 'Código de retirada enviado por e-mail com sucesso.' : result.message}
             <p className="mt-2 text-sm">O código permanece oculto para o porteiro.</p>
           </div>
           <div className="space-y-3">

@@ -84,7 +84,7 @@ function ProtectedRoute({ children, requiredRole }: { children: React.ReactNode;
     }
   }
 
-  return <>{children}</>;
+  return <div className="authenticated-app min-h-screen">{children}</div>;
 }
 
 function AppRoutes() {

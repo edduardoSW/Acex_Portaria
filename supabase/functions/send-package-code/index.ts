@@ -51,14 +51,38 @@ function escapeHtml(value: string): string {
   })[character] ?? character);
 }
 
+async function resolveSender(apiKey: string): Promise<string | null> {
+  const configured = Deno.env.get("EMAIL_FROM")?.trim();
+  if (configured) return configured;
+
+  try {
+    const response = await fetch("https://api.resend.com/domains", {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    if (!response.ok) return null;
+    const payload = await response.json().catch(() => ({}));
+    const domains = Array.isArray(payload.data) ? payload.data : [];
+    const verified = domains.find((domain: unknown) => {
+      if (!domain || typeof domain !== "object") return false;
+      const item = domain as Record<string, unknown>;
+      return item.status === "verified" && typeof item.name === "string";
+    }) as Record<string, unknown> | undefined;
+    return verified ? `Acex Portaria <portaria@${String(verified.name)}>` : null;
+  } catch {
+    return null;
+  }
+}
+
 async function sendWithResend(
   email: string,
   residentName: string,
   packageCreatedAt: string,
   code: string,
-): Promise<{ sent: boolean; providerId: string | null }> {
+): Promise<{ sent: boolean; providerId: string | null; reason: string | null }> {
   const apiKey = Deno.env.get("RESEND_API_KEY");
-  if (!apiKey) return { sent: false, providerId: null };
+  if (!apiKey) return { sent: false, providerId: null, reason: "provider_not_configured" };
+  const from = await resolveSender(apiKey);
+  if (!from) return { sent: false, providerId: null, reason: "sender_not_configured" };
 
   const date = new Date(packageCreatedAt).toLocaleString("pt-BR", {
     timeZone: "America/Sao_Paulo",
@@ -73,7 +97,7 @@ async function sendWithResend(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "Acex Portaria <onboarding@resend.dev>",
+      from,
       to: [email],
       subject: "Código de retirada da sua encomenda",
       text: `Olá, ${residentName}.\n\nUma encomenda registrada em ${date} está aguardando retirada.\n\nCódigo: ${code}\n\nO código é válido por 72 horas. Não o compartilhe com pessoas não autorizadas.\n\nAcex Portaria`,
@@ -82,12 +106,17 @@ async function sendWithResend(
   });
 
   if (!response.ok) {
-    console.error("Resend delivery rejected", { status: response.status });
-    return { sent: false, providerId: null };
+    const providerError = await response.json().catch(() => ({}));
+    console.error("Resend delivery rejected", {
+      status: response.status,
+      name: typeof providerError.name === "string" ? providerError.name : null,
+      message: typeof providerError.message === "string" ? providerError.message : null,
+    });
+    return { sent: false, providerId: null, reason: "provider_rejected" };
   }
 
   const result = await response.json().catch(() => ({}));
-  return { sent: true, providerId: typeof result.id === "string" ? result.id : null };
+  return { sent: true, providerId: typeof result.id === "string" ? result.id : null, reason: null };
 }
 
 serve(async (req) => {
@@ -158,7 +187,7 @@ serve(async (req) => {
       return json({ error: status === 403 ? "Acesso negado" : "Encomenda indisponível" }, status);
     }
 
-    let delivery = { sent: false, providerId: null as string | null };
+    let delivery = { sent: false, providerId: null as string | null, reason: null as string | null };
     try {
       delivery = await sendWithResend(
         rotation.resident_email,
@@ -168,6 +197,7 @@ serve(async (req) => {
       );
     } catch {
       console.error("Resend delivery failed");
+      delivery.reason = "provider_unavailable";
     }
 
     const now = new Date().toISOString();
@@ -182,6 +212,7 @@ serve(async (req) => {
       resend_count: rotation.resend_count,
     };
     if (delivery.providerId) metadata.provider_id = delivery.providerId;
+    if (delivery.reason) metadata.failure_reason = delivery.reason;
     const { error: historyError } = await supabase.from("package_pickup_events").insert({
       package_id: packageId,
       resident_id: rotation.resident_id,
@@ -197,6 +228,7 @@ serve(async (req) => {
     return json({
       success: true,
       deliveryStatus,
+      deliveryReason: delivery.reason,
       maskedEmail: maskEmail(rotation.resident_email),
     });
   } catch {

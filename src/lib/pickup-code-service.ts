@@ -13,6 +13,7 @@ type PickupResponse = {
 type SendPackageCodeResponse = {
   success: boolean;
   deliveryStatus: 'sent' | 'failed';
+  deliveryReason?: 'provider_not_configured' | 'sender_not_configured' | 'provider_rejected' | 'provider_unavailable' | null;
   maskedEmail: string;
 };
 
@@ -33,12 +34,18 @@ async function sendPackageCode(packageId: string): Promise<PickupResponse> {
 
   const response = data as SendPackageCodeResponse;
   const emailSent = response.deliveryStatus === 'sent';
+  const failureMessages: Record<string, string> = {
+    provider_not_configured: 'O serviço de e-mail ainda não está configurado.',
+    sender_not_configured: 'O remetente de e-mail ainda não está configurado.',
+    provider_rejected: 'O provedor recusou o envio. Confirme o e-mail do morador e tente reenviar.',
+    provider_unavailable: 'O serviço de e-mail está temporariamente indisponível.',
+  };
   return {
     success: response.success,
     emailSent,
     message: emailSent
       ? `Código enviado para ${response.maskedEmail}`
-      : `Não foi possível enviar para ${response.maskedEmail}`,
+      : failureMessages[response.deliveryReason ?? ''] ?? `Não foi possível enviar para ${response.maskedEmail}`,
   };
 }
 
@@ -52,13 +59,13 @@ export const pickupCodeService = {
     try {
       const delivery = await sendPackageCode(created.packageId);
       return { ...delivery, packageId: created.packageId };
-    } catch {
+    } catch (error) {
       // A encomenda permanece pendente e o porteiro pode reenviar pela tela de pendentes.
       return {
         success: true,
         packageId: created.packageId,
         emailSent: false,
-        message: 'Encomenda registrada, mas não foi possível enviar o código',
+        message: error instanceof Error ? error.message : 'Encomenda registrada, mas não foi possível enviar o código',
       };
     }
   },

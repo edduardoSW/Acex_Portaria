@@ -6,6 +6,7 @@ export type PricingPlan = {
   name: string;
   range: string;
   price: number | null;
+  maxUnits: number | null;
   description: string;
   confirmationUsers: number | null;
   features: string[];
@@ -19,6 +20,8 @@ type PricingSectionProps = {
 };
 
 export function PricingSection({ plans, onSelect, onCustom }: PricingSectionProps) {
+  const formatPrice = (value: number) => value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
   return (
     <section id="planos" className="pricing-section theme-section relative w-full overflow-hidden bg-black py-20 font-sans text-white selection:bg-white selection:text-black sm:py-28">
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
@@ -82,6 +85,14 @@ export function PricingSection({ plans, onSelect, onCustom }: PricingSectionProp
                 <span className="text-5xl font-medium tracking-[-0.06em]">{plan.price}</span>
                 <span className="text-sm font-medium text-neutral-500">/ mês</span>
               </div>
+
+              {plan.price && plan.maxUnits && (
+                <div className="mb-7 rounded-lg border border-acex-teal/20 bg-acex-teal/[0.08] p-4">
+                  <p className="text-xs font-medium uppercase tracking-widest text-acex-teal">Custo por apartamento</p>
+                  <p className="mt-2 text-2xl font-medium text-white">R$ {formatPrice(plan.price / plan.maxUnits)}</p>
+                  <p className="mt-1 text-xs leading-5 text-neutral-500">por mês, considerando o limite de {plan.maxUnits} unidades do plano</p>
+                </div>
+              )}
 
               <button
                 type="button"
